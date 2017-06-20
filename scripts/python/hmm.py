@@ -68,18 +68,20 @@ class Hmm:
 
 
 
-transition_table = [[0.7, 0.3],
-                    [0.4, 0.6,]]
+transition_table = [[0.25, 0.25, 0.50],
+                    [0.40, 0.20, 0.40],
+                    [0.11, 0.33, 0.56]]
 
-observation_table = [[0.4, 0.6],
-                     [0.8, 0.2]]
+observation_table = [[0.00, 1.00],
+                     [0.40, 0.60],
+                     [0.56, 0.44]]
 
-initial_probability = [0.5, 0.5]
+initial_probability = [0.33, 0.33, 0.33]
 
 hmm = Hmm(transition_table, observation_table, initial_probability)
 
 print("Filtering:")
-print(hmm.filtering(3, [0,1,1]))
+print(hmm.filtering(15, [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1]))
 
 print("\nPrediction:")
 print(hmm.prediction(5, [0,1,1]))
