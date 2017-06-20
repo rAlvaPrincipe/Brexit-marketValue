@@ -150,15 +150,23 @@ def build_emission_m(stock , sentiment):
     n = stock.__len__() - 1
     n = float(n)
 
-
-    freqs[0][0] = freqs[0][0] / n
-    freqs[0][1] = freqs[0][1] / n
-    freqs[1][0] = freqs[1][0] / n
-    freqs[1][1] = freqs[1][1] / n
-    freqs[2][0] = freqs[2][0] / n
-    freqs[2][1] = freqs[2][1] / n
+    sale = freqs[0][0] + freqs[0][1]
+    stabile = (freqs[1][0] + freqs[1][1])
+    scende = (freqs[2][0] + freqs[2][1])
+    for i in range(0, 3):
+        for j in range(0, 2):
+            freqs[i][j] = float(freqs[i][j])
 
     emission_m = freqs
+
+    emission_m[0][0] = emission_m[0][0] / sale
+    emission_m[0][1] = emission_m[0][1] / sale
+    emission_m[1][0] = emission_m[1][0] / stabile
+    emission_m[1][1] = emission_m[1][1] / stabile
+    emission_m[2][0] = emission_m[2][0] / scende
+    emission_m[2][1] = emission_m[2][1] / scende
+
+
 
     print "MODELLO DI EMISSIONE:"
     printer(emission_m)
