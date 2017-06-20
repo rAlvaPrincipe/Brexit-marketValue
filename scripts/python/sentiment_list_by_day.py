@@ -13,12 +13,9 @@ def retrieveVocabulary(vocabular):
         query=""
 
         if vocabular.__len__() == 1 :
-            query= "dictionary = \"" + vocabular[0] + "\";"
+            query= "SELECT * FROM dictionary WHERE dictionary = \"" + vocabular[0] + "\";"
         elif vocabular.__len__() == 2 :
-            query= "dictionary = \"" + vocabular[0] + "\" or dictionary = \""+ vocabular[1]+ "\" ;"
-        elif vocabular.__len__() == 3 :
-            query= query + "dictionary = \"" + vocabular[0]+ "\" or dictionary = \""+ vocabular[1] + "\" or dictionary = \""+ vocabular[2]+ "\" ;"
-        query="SELECT * FROM dictionary WHERE "+query
+            query="SELECT * FROM total"
         try:
             cursor.execute(query)
             print(query)

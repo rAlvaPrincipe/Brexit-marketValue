@@ -18,7 +18,7 @@ class Interface:
 
         days_sentiment = {}
         out_file = open("Sentiment.txt", "w")
-        for i in range(0, days.__len__() - 1):
+        for i in range(0, days.__len__()):
             days_sentiment[i] = sm.day_sentiment(days[i], d)
             out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
             print(days_sentiment[i])
