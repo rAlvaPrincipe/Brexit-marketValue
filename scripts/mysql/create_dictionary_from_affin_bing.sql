@@ -10,7 +10,7 @@ add column dictionary varchar(30);
 update bing
 set dictionary = "bing";
 
-create table dictionary_1
+create table dictionary
 (select * from affin)
 union
 (select * from bing);

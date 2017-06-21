@@ -12,3 +12,4 @@ where word in (
 				) 
 and dictionary = "affin"
                 
+

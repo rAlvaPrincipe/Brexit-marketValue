@@ -21,12 +21,12 @@ class Interface:
         for i in range(0, days.__len__()):
             days_sentiment[i] = sm.day_sentiment(days[i], d)
             out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
-           print(days_sentiment[i])
+            print(days_sentiment[i])
         out_file.close()
 
         tollerance = 0.001
-        source = "D:\Dropbox\Universita\Modelli probabilistici per le decisioni\Progetto\Dataset\Market_values.txt"
-        source_ext = "D:\Dropbox\Universita\Modelli probabilistici per le decisioni\Progetto\Dataset\Market_values_ext.txt"
+        source = "../../datasets/Market_values.txt"
+        source_ext = "../../datasets/Market_values_ext.txt"
         source_emission = "Sentiment.txt"
         print("INPUT DATASET:")
         # printer(extract(source))

@@ -7,7 +7,7 @@ def retrieveVocabulary(vocabular):
         db = MySQLdb.connect(host="127.0.0.1",
                              user="root",
                              passwd="password",
-                             db="mp - progetto")
+                             db="experiments")
         # prepare a cursor object using cursor() method
         cursor = db.cursor()
         query=""
@@ -60,7 +60,7 @@ def day_sentiment(day,d):
     db = MySQLdb.connect(host="127.0.0.1",
                         user="root",
                         passwd="password",
-                        db="mp - progetto")
+                        db="experiments")
 
     # prepare a cursor object using cursor() method
     cursor = db.cursor()
@@ -70,15 +70,16 @@ def day_sentiment(day,d):
         cursor.execute("SELECT * FROM tweets WHERE tweet_date = \'"+day+"\';")
         results = cursor.fetchall()
         for row in results:
-            id_row = int(row[0])
-            id_tweet = str(row[1])
-            tweet = str(row[2])
-            tweet_date = str(row[3])
-            sentiment_bool = bool(row[4])
+            #id_row = int(row[0])
+           # id_tweet = str(row[1])
+            tweet = str(row[1])
+            #tweet_date = str(row[3])
+            #sentiment_bool = bool(row[4])
 
-            if sentiment(tweet,d) > 0:
+            score = sentiment(tweet,d)
+            if score > 0:
                 num += 1
-            if sentiment(tweet,d) < 0:
+            if score < 0:
                 den += 1
 
     except:
