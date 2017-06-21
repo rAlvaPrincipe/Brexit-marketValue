@@ -17,7 +17,11 @@ for line in open(negative_file):
         line = line.replace("\n", "")
         negative_words.append(line)
 
-
+#WARNING! Three words (envious,enviously,enviousness ) are positive AND negative.
+#we remove these words from positive_words list
+for i in positive_words:
+        if str(i) in negative_words:
+            positive_words.remove(str(i))
 
 # add the creation table at start
 f = open('BING.sql', 'a')
@@ -37,7 +41,7 @@ for word in positive_words:
     f.write("INSERT INTO bing VALUES (\'"+str(word).replace("'", "\\'")+"\', \'"+str(positive_value)+"\');\n")
 
 # append negative words
-for word in positive_words:
+for word in negative_words:
     f = open('BING.sql', 'a')
     f.write("INSERT INTO bing VALUES (\'"+str(word).replace("'", "\\'")+"\', \'"+str(negative_value)+"\');\n")
 
