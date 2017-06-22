@@ -1,6 +1,7 @@
 import sys
 import MySQLdb
 import math
+from hmm import Hmm
 import transEmissCalc as matrix
 
 ######
@@ -30,7 +31,7 @@ def retrieve_dictionary(name):
             query = "SELECT word, label FROM afinn96"
         elif name == "afinn111":
             query = "SELECT word, label FROM afinn111"
-
+        
         #exec the query and populate the dictionary
         try:
             cursor.execute(query)
@@ -107,7 +108,59 @@ def day_sentiment(day,dictionary):
     # and return log(x)
     return math.log(x)
 
+#build a sequence of observation with only positive/negative sentiment
+def standard_sequence(source_emission):
+    sentiment = matrix.extract(source_emission)
+    sequence = []
+    for count in range(0, sentiment.__len__()):
+        if sentiment[count][1] > 0:
+            sequence.extend([0])
+        elif sentiment[count][1] < 0:
+            sequence.extend([1])
+    print(sequence)
+    return sequence
 
+# build a sequence of observation based on sentiment variation
+def variation_sequence(source_emission, tollerance_emission):
+    sentiment = matrix.delta_emission(matrix.extract(source_emission))
+    sequence = []
+    for count in range(0, sentiment.__len__()):
+        if sentiment[count][1] > tollerance_emission:
+            sequence.extend([0])
+        elif sentiment[count][1] < tollerance_emission:
+            sequence.extend([1])
+    print(sequence)
+    return sequence
+
+# build a sequence of observation based on normalizedsentiment variation
+def normalized_sequence(source_emission, tollerance_norm):
+    sentiment = matrix.delta_emission(matrix.extract(source_emission))
+    print(sentiment)
+    sentiment = self.normalize(sentiment)
+    print(sentiment)
+    sequence = []
+    for count in range(0, sentiment.__len__()):
+        if sentiment[count] > tollerance_norm:
+            sequence.extend([0])
+        elif sentiment[count] < tollerance_norm:
+            sequence.extend([1])
+    print(sequence)
+    return sequence
+
+
+def normalize(self, list):
+    sum = 0.0
+    for count in range(0, list.__len__()):
+        sum += float(list[count][1])
+
+    # compute alpha: the normalization variable
+    alpha = 1.0 / float(sum)
+
+    normalized_list = []
+    for count in range(0, list.__len__()):
+        normalized_list.append(alpha * float(list[count][1]))
+
+    return normalized_list
 
 
 ## main program ##
@@ -152,14 +205,44 @@ def main():
 
     #calculate the matrix dataset
     tollerance = 0.001
+    tollerance_var = 0.4
+    tollerance_norm = 0.7
+
     source = "../../datasets/Market_values.txt"
     source_ext = "../../datasets/Market_values_ext.txt"
-    source_emission = "Sentiment.txt"
-    print("INPUT DATASET:")
 
-    matrix.build_transition_m(matrix.extract(source_ext), tollerance)
-    matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance),
-                                matrix.delta_emission(matrix.extract(source_emission)))
+    #for valzo
+    source = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values.txt"
+    source_ext = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values_ext.txt"
+
+    source_emission = "Sentiment.txt"
+
+    #if you want to use only positive/negative sentiment:
+    #T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
+    #s=standard_sequence(source_emission)
+    #O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), s)
+    #I = [0.33, 0.33, 0.34]
+    #model = Hmm(T, O, I)
+    #print("Filtering:")
+    #print(model.filtering(19, standard_sequence(source_emission)))
+
+    # if you want to use sentiment variation:
+    T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
+    O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), variation_sequence(source_emission, tollerance_var))
+    I = [0.33, 0.33, 0.34]
+    model = Hmm(T, O, I)
+    print("Filtering:")
+    print(model.filtering(19, variation_sequence(source_emission, tollerance_var)))
+
+
+    # if you want to use normalized variation:
+    #T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
+    #O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), normalized_sequence(source_emission, tollerance_norm))
+    #I = [0.33, 0.33, 0.34]
+    #model = Hmm(T, O, I)
+    #print("Filtering:")
+    #print(model.filtering(19, normalized_sequence(source_emission, tollerance_norm)))
+
 
 
 

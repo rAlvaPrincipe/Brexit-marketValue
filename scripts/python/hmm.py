@@ -66,22 +66,22 @@ class Hmm:
     def describe(self):
         print "Transition table : ", self.T,  ", Obs: ", self.O,", prob: ", self.I
 
+##you can use this code in main_no_gtk!
 
+#transition_table = [[0.25, 0.25, 0.50],
+#                   [0.40, 0.20, 0.40],
+#                    [0.11, 0.33, 0.56]]
 
-transition_table = [[0.25, 0.25, 0.50],
-                    [0.40, 0.20, 0.40],
-                    [0.11, 0.33, 0.56]]
+#observation_table = [[0.00, 1.00],
+#                     [0.40, 0.60],
+#                     [0.56, 0.44]]
 
-observation_table = [[0.00, 1.00],
-                     [0.40, 0.60],
-                     [0.56, 0.44]]
+#initial_probability = [0.33, 0.33, 0.33]
 
-initial_probability = [0.33, 0.33, 0.33]
+#hmm = Hmm(transition_table, observation_table, initial_probability)
 
-hmm = Hmm(transition_table, observation_table, initial_probability)
+#print("Filtering:")
+#print(hmm.filtering(15, [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1]))
 
-print("Filtering:")
-print(hmm.filtering(15, [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1]))
-
-print("\nPrediction:")
-print(hmm.prediction(5, [0,1,1]))
+#print("\nPrediction:")
+#print(hmm.prediction(5, [0,1,1]))

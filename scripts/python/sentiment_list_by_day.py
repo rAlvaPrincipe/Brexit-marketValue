@@ -5,7 +5,7 @@ def retrieveVocabulary(vocabulary_request):
         vocabulary={}
         db = MySQLdb.connect(host="127.0.0.1",
                              user="root",
-                             passwd="password",
+                             passwd="root",
                              db="experiments")
         
         # prepare a cursor object using cursor() method
@@ -47,7 +47,7 @@ def day_sentiment(day,vocab):
 
     db = MySQLdb.connect(host="127.0.0.1",
                         user="root",
-                        passwd="password",
+                        passwd="root",
                         db="experiments")
 
     # prepare a cursor object using cursor() method

@@ -127,19 +127,14 @@ def build_emission_m(stock , sentiment):
     stabile = 0
     count = 0
 
-    for count in range(0, stock.__len__() - 1):
-        if stock[count][2] == "sale" and sentiment[count][1] > 0 :
-            freqs [0][0]+=1
-        elif stock[count][2] == "sale" and sentiment[count][1] < 0 :
-            freqs[0][1] += 1
-        elif stock[count][2] == "stabile" and sentiment[count][1] > 0:
-            freqs[1][0] += 1
-        elif stock[count][2] == "stabile" and sentiment[count][1] < 0:
-            freqs[1][1] += 1
-        elif stock[count][2] == "scende" and sentiment[count][1] > 0:
-            freqs[2][0] += 1
-        elif stock[count][2] == "scende" and sentiment[count][1] < 0:
-            freqs[2][1] += 1
+    for count in range(0, stock.__len__()):
+        # NB: sentiment[i]=0 -> pos , sentiment[i]=1 -> neg
+        if stock[count][2] == "sale":
+            freqs[0][sentiment[count]] += 1
+        elif stock[count][2] == "stabile":
+            freqs[1][sentiment[count]] += 1
+        elif stock[count][2] == "scende":
+            freqs[2][sentiment[count]] += 1
 
 
     print("\nFREQUENZE ASSOLUTE:")
