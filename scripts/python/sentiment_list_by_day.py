@@ -10,7 +10,7 @@ def retrieveVocabulary(vocabulary_request):
         
         # prepare a cursor object using cursor() method
         cursor = db.cursor()
-        query = "SELECT * FROM dictionary WHERE dictionary = \"" + vocabulary_request + "\";"
+        query = "SELECT * FROM " + vocabulary_request + ";"
         try:
             cursor.execute(query)
             print(query)

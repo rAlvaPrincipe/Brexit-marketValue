@@ -50,7 +50,8 @@ def printer(array):
 # ogni possibile transizione la sua probabilita. Inoltre stampa le frequenze
 # assolute di tali transizioni nel dataset
 def build_transition_m(data, tollerance):
-    freqs = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]  #saleThenSale, saleThenScende, saleThenstabile, scendeThenSale, ...
+    # [saleThenSale, saleThenStabile, saleThenScende], [stabileThenSale, stabileThenStabile, stabileThenScende], ..
+    freqs = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]  
     sale = 0
     scende = 0
     stabile = 0
@@ -119,7 +120,8 @@ def delta_emission(values):
     return deltas
 
 def build_emission_m(stock , sentiment):
-    freqs = [[0, 0], [0, 0], [0, 0]]  #saleThenSale, saleThenScende, saleThenstabile, scendeThenSale, ...
+    # [saleThenSale, saleThenStabile, saleThenScende], [stabileThenSale, stabileThenStabile, stabileThenScende], ..
+    freqs = [[0, 0], [0, 0], [0, 0]]  
     sale = 0
     scende = 0
     stabile = 0
