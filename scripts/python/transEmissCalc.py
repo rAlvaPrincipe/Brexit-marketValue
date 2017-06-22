@@ -139,9 +139,9 @@ def build_emission_m(stock , sentiment):
 
     print("\nFREQUENZE ASSOLUTE:")
     print "       ", "Sent+" , "Sent-"
-    print "sale", freqs[0][0]," ", freqs[0][1]
-    print "stabile   ", freqs[1][0]," ", freqs[1][1]
-    print "scende ", freqs[2][0]," ", freqs[2][1]
+    print "sale     ", freqs[0][0]," ", freqs[0][1]
+    print "stabile  ", freqs[1][0]," ", freqs[1][1]
+    print "scende   ", freqs[2][0]," ", freqs[2][1]
 
 
     n = stock.__len__() - 1
