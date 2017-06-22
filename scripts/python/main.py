@@ -70,13 +70,13 @@ class Interface:
         vbox = gtk.VBox(True, 2)
         self.window.add(vbox)
 
-        button = gtk.CheckButton("affin-96")
-        button.connect("toggled", self.callback, "affin-96")
+        button = gtk.CheckButton("afinn96")
+        button.connect("toggled", self.callback, "afinn96")
         vbox.pack_start(button, True, True, 2)
         button.show()
 
-        button = gtk.CheckButton("affin-111")
-        button.connect("toggled", self.callback, "affin-111")
+        button = gtk.CheckButton("afinn111")
+        button.connect("toggled", self.callback, "afinn111")
         vbox.pack_start(button, True, True, 2)
         button.show()
 
