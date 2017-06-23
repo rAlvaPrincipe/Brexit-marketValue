@@ -181,8 +181,7 @@ class Calculator:
 
         if sentiment_type == "standard":
             T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
-            s = standard_sequence(source_emission)
-            O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), s)
+            O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_standard_sequence(source_emission))
             I = [0.33, 0.33, 0.34]
             model = Hmm(T, O, I)
             print("Filtering:")
@@ -191,8 +190,7 @@ class Calculator:
         elif sentiment_type == "variation":
             # if you want to use sentiment variation:
             T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
-            O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance),
-                                        self.boolean_variation_sequence(source_emission, tollerance_var))
+            O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_variation_sequence(source_emission, tollerance_var))
             I = [0.33, 0.33, 0.34]
             model = Hmm(T, O, I)
             print("Filtering:")
@@ -201,8 +199,7 @@ class Calculator:
         elif sentiment_type == "normalized":
             # if you want to use normalized variation:
             T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
-            O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance),
-                                        self.normalized_sequence(source_emission, tollerance_norm))
+            O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.normalized_sequence(source_emission, tollerance_norm))
             I = [0.33, 0.33, 0.34]
             model = Hmm(T, O, I)
             print("Filtering:")
@@ -220,4 +217,4 @@ if __name__ == "__main__":
     calculator = Calculator()
     # vocabulary = afinn96, affin111, bing, nrc
     # sentiment_type = standard, variation, normalized
-    calculator.start("bing", "variation")
+    calculator.start("bing", "standard")
