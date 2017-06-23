@@ -68,6 +68,5 @@ def day_sentiment(day,vocab):
         print("Error tweets: unable to fetch data.")
 
     db.close()
-
     daySentiment = float( 1 + pos_daySentiment ) / float( 1 + neg_daySentiment )
     return math.log(daySentiment) 
