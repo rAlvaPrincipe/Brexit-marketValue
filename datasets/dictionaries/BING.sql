@@ -590,7 +590,6 @@ INSERT INTO bing VALUES ('entrancing', '2');
 INSERT INTO bing VALUES ('entrust', '2');
 INSERT INTO bing VALUES ('enviable', '2');
 INSERT INTO bing VALUES ('enviably', '2');
-INSERT INTO bing VALUES ('enviously', '2');
 INSERT INTO bing VALUES ('envy', '2');
 INSERT INTO bing VALUES ('equitable', '2');
 INSERT INTO bing VALUES ('ergonomical', '2');
