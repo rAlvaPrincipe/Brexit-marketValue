@@ -16,4 +16,5 @@ Given 4 weeks of GBP/EUR market value and the tweets with hashtag #brexit from t
 This repository contain all the code and setup for the  master degree CS course: MODELLI PROBABILISTICI PER LE DECISIONI
 1617-1-F1801Q127, University of Milano Bicocca.
 
+Members: Marco, Marco, Renzo
 Group: gnabgib
