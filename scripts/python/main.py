@@ -1,40 +1,20 @@
 import transEmissCalc as matrix
 import sentiment_list_by_day as sm
 import pygtk
+
 pygtk.require('2.0')
 import gtk
+from hmm import Hmm
+
 
 class Interface:
+    vocabulary = []
     vocabulary_request = ""
 
-
     def calcola(self, widget, data=None):
-        days = ['2016/12/05', '2016/12/06', '2016/12/07', '2016/12/08', '2016/12/09',
-                '2016/12/12', '2016/12/13', '2016/12/14', '2016/12/15', '2016/12/16',
-                '2016/12/19', '2016/12/20', '2016/12/21', '2016/12/22', '2016/12/23',
-                '2016/12/27', '2016/12/28', '2016/12/29', '2016/12/30']
-        days_sentiment = {}
-        out_file = open("Sentiment.txt", "w")
-        vocabulary = sm.retrieveVocabulary(self.vocabulary_request)
-
-        for i in range(0, days.__len__()):
-            days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
-            out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
-            print(days_sentiment[i])
-        out_file.close()
-
-
-        tollerance = 0.001
-        source = "../../datasets/Market_values.txt"
-        source_ext = "../../datasets/Market_values_ext.txt"
-        source_emission = "Sentiment.txt"
-        print("INPUT DATASET:")
-
-        matrix.build_transition_m(matrix.extract(source_ext), tollerance)
-        matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance),
-                                matrix.delta_emission(matrix.extract(source_emission)))
-
-
+        calculator = Calculator()
+        # use default sentiment_type = variation
+        calculator.start(self.vocabulary_request, "variation")
 
     def delete_event(self, widget, event, data=None):
         # If you return FALSE in the "delete_event" signal handler,
@@ -47,19 +27,16 @@ class Interface:
         # with a "delete_event".
         return False
 
-     # Another callback
-
+        # Another callback
 
     def destroy(self, widget, data=None):
         gtk.main_quit()
 
-
     def callback(self, widget, data=None):
-        if (widget.get_active()  == True):
+        if (widget.get_active() == True):
             self.vocabulary_request = data
-        if (widget.get_active()  == False):
+        if (widget.get_active() == False):
             self.vocabulary_rdequest = ""
-
 
     def __init__(self):
         self.window = gtk.Window(gtk.WINDOW_TOPLEVEL)
@@ -99,7 +76,6 @@ class Interface:
         vbox.show()
         self.window.show()
 
-
     # All PyGTK applications must have a gtk.main(). Control ends here
     # and waits for an event to occur (like a key press or mouse event).
     # If the program is run directly or passed as an argument to the python
@@ -108,6 +84,140 @@ class Interface:
         gtk.main()
 
 
+class Calculator:
+    # compute the sentiment variation
+    def delta_emission(self, values):
+        deltas = []
+        for count in range(0, values.__len__()):
+            column = []
+            column.append(values[count][0])
+            if count == 0:
+                column.append("0")
+            if count != 0:
+                column.append((values[count - 1][1] - values[count][1]))
+            deltas.append(column)
+        return deltas
+
+    # build a sequence of observation with only positive/negative sentiment
+    def boolean_standard_sequence(self, source_emission):
+        sentiment = matrix.extract(source_emission)
+        sequence = []
+        for count in range(0, sentiment.__len__()):
+            if sentiment[count][1] > 0:
+                sequence.extend([0])
+            elif sentiment[count][1] < 0:
+                sequence.extend([1])
+        print(sequence)
+        return sequence
+
+    # build a sequence of observation based on sentiment variation
+    def boolean_variation_sequence(self, source_emission, tollerance_var):
+        sentiment = self.delta_emission(matrix.extract(source_emission))
+        sequence = []
+        for count in range(0, sentiment.__len__()):
+            if sentiment[count][1] > 0:
+                sequence.extend([0])
+            elif sentiment[count][1] < 0:
+                sequence.extend([1])
+        print(sequence)
+        return sequence
+
+    # build a sequence of observation based on normalizedsentiment variation
+    def boolean_normalized_sequence(self, source_emission, tollerance_norm):
+        sentiment = delta_emission(matrix.extract(source_emission))
+        print(sentiment)
+        sentiment = self.normalize(sentiment)
+        print(sentiment)
+        sequence = []
+        for count in range(0, sentiment.__len__()):
+            if sentiment[count] > tollerance_norm:
+                sequence.extend([0])
+            elif sentiment[count] < tollerance_norm:
+                sequence.extend([1])
+        print(sequence)
+        return sequence
+
+    def normalize(self, list):
+        sum = 0.0
+        for count in range(0, list.__len__()):
+            sum += float(list[count][1])
+
+        # compute alpha: the normalization variable
+        alpha = 1.0 / float(sum)
+
+        normalized_list = []
+        for count in range(0, list.__len__()):
+            normalized_list.append(alpha * float(list[count][1]))
+
+        return normalized_list
+
+    def start(self, vocabulary_request, sentiment_type):
+        days = ['2016/12/05', '2016/12/06', '2016/12/07', '2016/12/08', '2016/12/09',
+                '2016/12/12', '2016/12/13', '2016/12/14', '2016/12/15', '2016/12/16',
+                '2016/12/19', '2016/12/20', '2016/12/21', '2016/12/22', '2016/12/23',
+                '2016/12/27', '2016/12/28', '2016/12/29', '2016/12/30']
+        days_sentiment = {}
+
+        vocabulary = sm.retrieveVocabulary(vocabulary_request)
+
+        out_file = open("Sentiment.txt", "w")
+        for i in range(0, days.__len__()):
+            days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
+            out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
+            print(days_sentiment[i])
+        out_file.close()
+
+        tollerance = 0.001
+        tollerance_var = 0.4
+        tollerance_norm = 0.7
+        source = "../../datasets/Market_values.txt"
+        source_ext = "../../datasets/Market_values_ext.txt"
+
+        # for valzo
+        source = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values.txt"
+        source_ext = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values_ext.txt"
+
+        source_emission = "Sentiment.txt"
+
+        if sentiment_type == "standard":
+            T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
+            s = standard_sequence(source_emission)
+            O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), s)
+            I = [0.33, 0.33, 0.34]
+            model = Hmm(T, O, I)
+            print("Filtering:")
+            print(model.filtering(19, self.boolean_standard_sequence(source_emission)))
+
+        elif sentiment_type == "variation":
+            # if you want to use sentiment variation:
+            T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
+            O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance),
+                                        self.boolean_variation_sequence(source_emission, tollerance_var))
+            I = [0.33, 0.33, 0.34]
+            model = Hmm(T, O, I)
+            print("Filtering:")
+            print(model.filtering(19, self.boolean_variation_sequence(source_emission, tollerance_var)))
+
+        elif sentiment_type == "normalized":
+            # if you want to use normalized variation:
+            T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
+            O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance),
+                                        self.normalized_sequence(source_emission, tollerance_norm))
+            I = [0.33, 0.33, 0.34]
+            model = Hmm(T, O, I)
+            print("Filtering:")
+            print(model.filtering(19, self.boolean_normalized_sequence(source_emission, tollerance_norm)))
+
+
 if __name__ == "__main__":
-    interface = Interface()
-    interface.main()
+    # USE THIS IF YOU WANT GUI
+
+    # interface = Interface()
+    # interface.main()
+
+    # USE THIS IF YOU DON'T WANT GUI
+
+    calculator = Calculator()
+    # vocabulary = afinn96, affin111, bing, nrc
+    # sentiment_type = standard, variation, normalized
+    calculator.start("bing", "variation")
