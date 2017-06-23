@@ -20,8 +20,13 @@ for line in open(negative_file):
 #WARNING! Three words (envious,enviously,enviousness ) are positive AND negative.
 #we remove these words from positive_words list
 for i in positive_words:
-        if str(i) in negative_words:
+        if i in negative_words:
             positive_words.remove(str(i))
+for i in negative_words:
+        if i in positive_words:
+            positive_words.remove(str(i))
+
+#todo ^ why double check? investigate.
 
 # add the creation table at start
 f = open('BING.sql', 'a')
