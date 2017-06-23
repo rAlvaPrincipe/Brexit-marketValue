@@ -169,13 +169,12 @@ class Calculator:
 
         vocabulary = sm.retrieveVocabulary(vocabulary_request)
 
-        # out_file = open("Sentiment.txt", "w")
-        # for i in range(0, days.__len__()):
-        #    days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
-        #    out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
-        #    print(days_sentiment[i])
-        # out_file.close()
-
+        out_file = open("Sentiment.txt", "w")
+        for i in range(0, days.__len__()):
+            days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
+            out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
+            print(days_sentiment[i])
+        out_file.close()
 
         source = "../../datasets/Market_values.txt"
         source_ext = "../../datasets/Market_values_ext.txt"
@@ -230,4 +229,4 @@ if __name__ == "__main__":
     # vocabulary = afinn96, afinn111, bing, nrc
     # sentiment_type = standard, variation, normalized
     # tollerance for 3 type of discretization
-    calculator.start("total", "standard", 0.001, 0, 0.6)
+    calculator.start("bing", "standard", 0.001, 0, 0.6)
