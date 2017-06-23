@@ -1,6 +1,7 @@
 import transEmissCalc as matrix
 import sentiment_list_by_day as sm
 import pygtk
+import numpy as np
 
 pygtk.require('2.0')
 import gtk
@@ -107,7 +108,6 @@ class Calculator:
                 sequence.extend([0])
             elif sentiment[count][1] < 0:
                 sequence.extend([1])
-        print(sequence)
         return sequence
 
     # build a sequence of observation based on sentiment variation
@@ -119,38 +119,45 @@ class Calculator:
                 sequence.extend([0])
             elif sentiment[count][1] < 0:
                 sequence.extend([1])
-        print(sequence)
         return sequence
 
-    # build a sequence of observation based on normalizedsentiment variation
+    # build a sequence of observation based on normalized sentiment variation
     def boolean_normalized_sequence(self, source_emission, tollerance_norm):
-        sentiment = delta_emission(matrix.extract(source_emission))
-        print(sentiment)
+        sentiment = matrix.extract(source_emission)
         sentiment = self.normalize(sentiment)
-        print(sentiment)
         sequence = []
         for count in range(0, sentiment.__len__()):
             if sentiment[count] > tollerance_norm:
                 sequence.extend([0])
             elif sentiment[count] < tollerance_norm:
                 sequence.extend([1])
-        print(sequence)
         return sequence
 
     def normalize(self, list):
-        sum = 0.0
-        for count in range(0, list.__len__()):
-            sum += float(list[count][1])
-
         # compute alpha: the normalization variable
-        alpha = 1.0 / float(sum)
+        np_list=np.array(list)
+        float_list=[]
+        for count in range(0, np_list.__len__()):
+            float_list.append(float(np_list[count][1]))
+
+        max_v=max(float_list[:])
+        min_v=min(float_list[:])
 
         normalized_list = []
-        for count in range(0, list.__len__()):
-            normalized_list.append(alpha * float(list[count][1]))
-
+        for count in range(0, float_list.__len__()):
+            normalized_list.append((float_list[count] - min_v)/(max_v - min_v))
         return normalized_list
 
+    #count the correspondence between the real state sequence adn the predicted sequence
+    def correspondence(self, state, prediction):
+        count_corr=0.0
+        for count in range(0, state.__len__()):
+            if(str(state[count])==str(prediction[count])):
+                count_corr=count_corr+1
+
+        print("\nThe correspondence obteined is "+str(count_corr/state.__len__()))
+        print(state)
+        print(prediction)
     def start(self, vocabulary_request, sentiment_type):
         days = ['2016/12/05', '2016/12/06', '2016/12/07', '2016/12/08', '2016/12/09',
                 '2016/12/12', '2016/12/13', '2016/12/14', '2016/12/15', '2016/12/16',
@@ -168,8 +175,8 @@ class Calculator:
         out_file.close()
 
         tollerance = 0.001
-        tollerance_var = 0.4
-        tollerance_norm = 0.7
+        tollerance_var = 0
+        tollerance_norm = 0.45
         source = "../../datasets/Market_values.txt"
         source_ext = "../../datasets/Market_values_ext.txt"
 
@@ -178,14 +185,15 @@ class Calculator:
         source_ext = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values_ext.txt"
 
         source_emission = "Sentiment.txt"
-
+        predicted_sequence=[]
         if sentiment_type == "standard":
             T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
             O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_standard_sequence(source_emission))
             I = [0.33, 0.33, 0.34]
             model = Hmm(T, O, I)
             print("Filtering:")
-            print(model.filtering(19, self.boolean_standard_sequence(source_emission)))
+            predicted_sequence = model.filtering(19, self.boolean_standard_sequence(source_emission))
+            self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance), predicted_sequence)
 
         elif sentiment_type == "variation":
             # if you want to use sentiment variation:
@@ -194,16 +202,20 @@ class Calculator:
             I = [0.33, 0.33, 0.34]
             model = Hmm(T, O, I)
             print("Filtering:")
-            print(model.filtering(19, self.boolean_variation_sequence(source_emission, tollerance_var)))
+            predicted_sequence = model.filtering(19, self.boolean_variation_sequence(source_emission, tollerance_var))
+            self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance), predicted_sequence)
 
         elif sentiment_type == "normalized":
             # if you want to use normalized variation:
             T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
-            O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.normalized_sequence(source_emission, tollerance_norm))
+            O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_normalized_sequence(source_emission, tollerance_norm))
             I = [0.33, 0.33, 0.34]
             model = Hmm(T, O, I)
-            print("Filtering:")
-            print(model.filtering(19, self.boolean_normalized_sequence(source_emission, tollerance_norm)))
+            print("\nFiltering:")
+
+            predicted_sequence= model.filtering(19, self.boolean_normalized_sequence(source_emission, tollerance_norm))
+
+            self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance), predicted_sequence)
 
 
 if __name__ == "__main__":
@@ -217,4 +229,4 @@ if __name__ == "__main__":
     calculator = Calculator()
     # vocabulary = afinn96, affin111, bing, nrc
     # sentiment_type = standard, variation, normalized
-    calculator.start("bing", "standard")
+    calculator.start("bing", "variation")

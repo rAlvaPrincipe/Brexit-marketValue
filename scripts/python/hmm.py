@@ -16,16 +16,25 @@ class Hmm:
     # filtering describe the filtering task, return the probability distribution
     def filtering(self, steps, observations):
         out = self.I
-
+        results=[]
         for i in range(0,steps):
             print("\nstep: "+str(i))
             out = self.matrix_multiply(out, self.T) #prediction step
+            #wich state is predicted?
+            if(max(out) == out[0]):
+                results.append("sale")
+            elif (max(out) == out[1]):
+                results.append("stabile")
+            elif (max(out) == out[2]):
+                results.append("scende")
             print("_prediction: "+str(out))
             out = self.matrix_multiply(out, self.diagonal(observations[i])) #update step
+
             print("__update: "+str(out))
             out = self.normalize(out) #normalization
+
             print("___normalized: "+str(out))
-        return out
+        return results
 
     # prediction describe the prediction task, with filtering until observed
     def prediction(self, steps, observations):

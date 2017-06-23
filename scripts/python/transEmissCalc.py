@@ -28,18 +28,25 @@ def delta(values, tollerance):
         column.append(values[count][1] - values[count - 1][1])
         if abs(values[count][1] - values[count - 1][1]) <= tollerance:
             column.append("stabile")
-            state_sequence.append("stabile")
         elif values[count][1] > values[count - 1][1]:
             column.append("sale")
-            state_sequence.append("sale")
         else:
             column.append("scende")
-            state_sequence.append("scende")
         deltas.append(column)
-    print(state_sequence)
-
     return deltas
 
+#return state sequence based on tollerance
+def state_sequence(values, tollerance):
+    deltas = []
+    state_sequence = []
+    for count in range(1, values.__len__()):
+        if abs(values[count][1] - values[count - 1][1]) <= tollerance:
+            state_sequence.append("stabile")
+        elif values[count][1] > values[count - 1][1]:
+            state_sequence.append("sale")
+        else:
+            state_sequence.append("scende")
+    return state_sequence
 
 def printer(array):
     for el in array:
@@ -92,7 +99,7 @@ def build_transition_m(data, tollerance):
     print "sale", sale
     print "scende", scende
     printer(freqs)
-    print
+
 
     transition_m = freqs
 
