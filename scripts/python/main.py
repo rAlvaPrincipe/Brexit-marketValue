@@ -158,7 +158,9 @@ class Calculator:
         print("\nThe correspondence obteined is "+str(count_corr/state.__len__()))
         print(state)
         print(prediction)
-    def start(self, vocabulary_request, sentiment_type):
+
+
+    def start(self, vocabulary_request, sentiment_type, tollerance, tollerance_var, tollerance_norm):
         days = ['2016/12/05', '2016/12/06', '2016/12/07', '2016/12/08', '2016/12/09',
                 '2016/12/12', '2016/12/13', '2016/12/14', '2016/12/15', '2016/12/16',
                 '2016/12/19', '2016/12/20', '2016/12/21', '2016/12/22', '2016/12/23',
@@ -167,16 +169,14 @@ class Calculator:
 
         vocabulary = sm.retrieveVocabulary(vocabulary_request)
 
-        out_file = open("Sentiment.txt", "w")
-        for i in range(0, days.__len__()):
-            days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
-            out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
-            print(days_sentiment[i])
-        out_file.close()
+        # out_file = open("Sentiment.txt", "w")
+        # for i in range(0, days.__len__()):
+        #    days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
+        #    out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
+        #    print(days_sentiment[i])
+        # out_file.close()
 
-        tollerance = 0.001
-        tollerance_var = 0
-        tollerance_norm = 0.45
+
         source = "../../datasets/Market_values.txt"
         source_ext = "../../datasets/Market_values_ext.txt"
 
@@ -227,6 +227,7 @@ if __name__ == "__main__":
     # USE THIS IF YOU DON'T WANT GUI
 
     calculator = Calculator()
-    # vocabulary = afinn96, affin111, bing, nrc
+    # vocabulary = afinn96, afinn111, bing, nrc
     # sentiment_type = standard, variation, normalized
-    calculator.start("bing", "variation")
+    # tollerance for 3 type of discretization
+    calculator.start("total", "standard", 0.001, 0, 0.6)
