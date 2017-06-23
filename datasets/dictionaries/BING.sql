@@ -5014,7 +5014,6 @@ INSERT INTO bing VALUES ('nauseate', '-2');
 INSERT INTO bing VALUES ('nauseates', '-2');
 INSERT INTO bing VALUES ('nauseating', '-2');
 INSERT INTO bing VALUES ('nauseatingly', '-2');
-INSERT INTO bing VALUES ('naïve', '-2');
 INSERT INTO bing VALUES ('nebulous', '-2');
 INSERT INTO bing VALUES ('nebulously', '-2');
 INSERT INTO bing VALUES ('needless', '-2');
