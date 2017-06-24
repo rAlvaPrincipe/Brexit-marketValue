@@ -16,25 +16,31 @@ def extract(path):
 
 ### TRANSITION
 
-# prende in input l'output di extract e ritorna una matrice (n-1)x2 dove alla
+# prende in input l'output di extract e ritorna una matrice nx2 dove alla
 # prima riga ci sono i  giorni e alla seconda i delta
 # delta(day_t) = day_t - day_t-1
 def delta(values, tollerance):
     deltas = []
     state_sequence = []
-    for count in range(1, values.__len__()):
+    for count in range(0, values.__len__()):
         column = []
         column.append(values[count][0])
-        column.append(values[count][1] - values[count - 1][1])
-        if abs(values[count][1] - values[count - 1][1]) <= tollerance:
-            column.append("stabile")
-            state_sequence.append("stabile")
-        elif values[count][1] > values[count - 1][1]:
-            column.append("sale")
-            state_sequence.append("sale")
+
+        if count == 0:
+            column.append(0)
+            column.append("nullo")
+
         else:
-            column.append("scende")
-            state_sequence.append("scende")
+            column.append(values[count][1] - values[count - 1][1])
+            if abs(values[count][1] - values[count - 1][1]) <= tollerance:
+                column.append("stabile")
+                state_sequence.append("stabile")
+            elif values[count][1] > values[count - 1][1]:
+                column.append("sale")
+                state_sequence.append("sale")
+            else:
+                column.append("scende")
+                state_sequence.append("scende")
         deltas.append(column)
     print(state_sequence)
 
@@ -45,8 +51,10 @@ def delta(values, tollerance):
 def state_sequence(values, tollerance):
     deltas = []
     state_sequence = []
-    for count in range(1, values.__len__()):
-        if abs(values[count][1] - values[count - 1][1]) <= tollerance:
+    for count in range(0, values.__len__()):
+        if count == 0:
+            state_sequence.append("nullo")
+        elif abs(values[count][1] - values[count - 1][1]) <= tollerance:
             state_sequence.append("stabile")
         elif values[count][1] > values[count - 1][1]:
             state_sequence.append("sale")
@@ -145,11 +153,11 @@ def build_emission_m(stock, sentiment):
     for count in range(0, stock.__len__()):
         # NB: sentiment[i]=0 -> pos , sentiment[i]=1 -> neg
         if stock[count][2] == "sale":
-            freqs[0][sentiment[count+1]] += 1
+            freqs[0][sentiment[count]] += 1
         elif stock[count][2] == "stabile":
-            freqs[1][sentiment[count+1]] += 1
+            freqs[1][sentiment[count]] += 1
         elif stock[count][2] == "scende":
-            freqs[2][sentiment[count+1]] += 1
+            freqs[2][sentiment[count]] += 1
 
     print("\nFREQUENZE ASSOLUTE:")
     print "       ", "Sent+", "Sent-"

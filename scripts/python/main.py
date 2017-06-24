@@ -151,12 +151,12 @@ class Calculator:
 
     #count the correspondence between the real state sequence adn the predicted sequence
     def correspondence(self, state, prediction):
-        count_corr=0.0
-        for count in range(0, state.__len__()):
-            if(str(state[count])==str(prediction[count])):
-                count_corr=count_corr+1
+        count_corr = 0.0
+        for count in range(1, state.__len__()):
+            if(str(state[count])==str(prediction[count-1])):
+                count_corr += 1
 
-        print("\nThe correspondence obteined is "+str(count_corr/state.__len__()))
+        print("\nThe correspondence obteined is "+str(count_corr/ float(state.__len__() - 1)))
         print(state)
         print(prediction)
 
@@ -185,11 +185,12 @@ class Calculator:
         #source_ext = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values_ext.txt"
 
         source_emission = "Sentiment.txt"
+    
         predicted_sequence=[]
         if sentiment_type == "standard":
             T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
             O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_standard_sequence(source_emission))
-            I = [0.33, 0.33, 0.34]
+            I = [1.0/3.0, 1.0/3.0, 1.0/3.0]
             model = Hmm(T, O, I)
             print("Filtering:")
             predicted_sequence = model.filtering(19, self.boolean_standard_sequence(source_emission))
@@ -199,7 +200,7 @@ class Calculator:
             # if you want to use sentiment variation:
             T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
             O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_variation_sequence(source_emission, tollerance_var))
-            I = [0.33, 0.33, 0.34]
+            I = [1.0/3.0, 1.0/3.0, 1.0/3.0]
             model = Hmm(T, O, I)
             print("Filtering:")
             predicted_sequence = model.filtering(19, self.boolean_variation_sequence(source_emission, tollerance_var))
@@ -209,7 +210,7 @@ class Calculator:
             # if you want to use normalized variation:
             T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
             O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_normalized_sequence(source_emission, tollerance_norm))
-            I = [0.33, 0.33, 0.34]
+            I = [1.0/3.0, 1.0/3.0, 1.0/3.0]
             model = Hmm(T, O, I)
             print("\nFiltering:")
 
