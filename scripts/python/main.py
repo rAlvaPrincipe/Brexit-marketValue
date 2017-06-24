@@ -180,8 +180,8 @@ class Calculator:
         source_ext = "../../datasets/Market_values_ext.txt"
 
         # for valzo
-        source = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values.txt"
-        source_ext = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values_ext.txt"
+       # source = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values.txt"
+        #source_ext = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values_ext.txt"
 
         source_emission = "Sentiment.txt"
         predicted_sequence=[]
