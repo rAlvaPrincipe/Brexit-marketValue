@@ -70,10 +70,10 @@ def printer(array):
 # assolute di tali transizioni nel dataset
 def build_transition_m(data, tollerance):
     # [saleThenSale, saleThenStabile, saleThenScende], [stabileThenSale, stabileThenStabile, stabileThenScende], ..
-    freqs = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
-    sale = 0
-    scende = 0
-    stabile = 0
+    freqs = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+    sale = 0.0
+    scende = 0.0
+    stabile = 0.0
 
     for count in range(1, data.__len__() - 1):
         if abs(data[count][1] - data[count - 1][1]) <= tollerance:
@@ -112,15 +112,15 @@ def build_transition_m(data, tollerance):
 
     for i in range(0, 3):
         if(sale > 0):
-            transition_m[0][i] = (float(freqs[0][i]) / float(sale))
+            transition_m[0][i] = freqs[0][i] / sale
         else:
             transition_m[0][i] = 0 
         if(stabile > 0):
-            transition_m[1][i] = (float(freqs[1][i]) / float(stabile))
+            transition_m[1][i] = freqs[1][i] / stabile
         else:
             transition_m[1][i] = 0
         if(scende > 0):
-            transition_m[2][i] = (float(freqs[2][i]) / float(scende))
+            transition_m[2][i] = freqs[2][i] / scende
         else :
             transition_m[2][i] = 0
 
@@ -136,21 +136,20 @@ def build_transition_m(data, tollerance):
 ### EMISSION
 
 def build_emission_m(stock, sentiment):
-    # [saleThenSale, saleThenStabile, saleThenScende], [stabileThenSale, stabileThenStabile, stabileThenScende], ..
-    freqs = [[0, 0], [0, 0], [0, 0]]
-    sale = 0
-    scende = 0
-    stabile = 0
-    count = 0
+    # [sale&sent+, sale&sent], [stabile&sent+, stabile&sent-] [scende&sent+, scende&sent-]
+    freqs = [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0]]
+    sale = 0.0
+    scende = 0.0
+    stabile = 0.0
 
     for count in range(0, stock.__len__()):
         # NB: sentiment[i]=0 -> pos , sentiment[i]=1 -> neg
         if stock[count][2] == "sale":
-            freqs[0][sentiment[count]] += 1
+            freqs[0][sentiment[count+1]] += 1
         elif stock[count][2] == "stabile":
-            freqs[1][sentiment[count]] += 1
+            freqs[1][sentiment[count+1]] += 1
         elif stock[count][2] == "scende":
-            freqs[2][sentiment[count]] += 1
+            freqs[2][sentiment[count+1]] += 1
 
     print("\nFREQUENZE ASSOLUTE:")
     print "       ", "Sent+", "Sent-"
@@ -158,15 +157,9 @@ def build_emission_m(stock, sentiment):
     print "stabile  ", freqs[1][0], " ", freqs[1][1]
     print "scende   ", freqs[2][0], " ", freqs[2][1]
 
-    n = stock.__len__() - 1
-    n = float(n)
-
-    sale = freqs[0][0] + freqs[0][1]
+    sale = (freqs[0][0] + freqs[0][1])
     stabile = (freqs[1][0] + freqs[1][1])
     scende = (freqs[2][0] + freqs[2][1])
-    for i in range(0, 3):
-        for j in range(0, 2):
-            freqs[i][j] = float(freqs[i][j])
 
     emission_m = freqs
 
@@ -194,5 +187,3 @@ def build_emission_m(stock, sentiment):
     printer(emission_m)
 
     return emission_m
-
-build_transition_m(extract("/home/renzo/rAlvaPrincipe/Brexit-marketValue/datasets/Market_values.txt"), 0.001)

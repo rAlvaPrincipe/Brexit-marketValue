@@ -99,7 +99,8 @@ class Calculator:
             deltas.append(column)
         return deltas
 
-    # build a sequence of observation with only positive/negative sentiment
+    # builds a sequence of observation with only positive/negative sentiment
+    # it uses 0 for pos and 1 for negs 
     def boolean_standard_sequence(self, source_emission):
         sentiment = matrix.extract(source_emission)
         sequence = []
