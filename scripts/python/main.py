@@ -95,7 +95,7 @@ class Calculator:
             if count == 0:
                 column.append("0")
             if count != 0:
-                column.append((values[count - 1][1] - values[count][1]))
+                column.append((values[count][1] - values[count - 1][1]))
             deltas.append(column)
         return deltas
 
@@ -112,6 +112,7 @@ class Calculator:
         return sequence
 
     # build a sequence of observation based on sentiment variation
+    # it uses 0 for sale and 1 for scende
     def boolean_variation_sequence(self, source_emission, tollerance_var):
         sentiment = self.delta_emission(matrix.extract(source_emission))
         sequence = []
@@ -185,7 +186,7 @@ class Calculator:
         #source_ext = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values_ext.txt"
 
         source_emission = "Sentiment.txt"
-    
+
         predicted_sequence=[]
         if sentiment_type == "standard":
             T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
@@ -213,9 +214,7 @@ class Calculator:
             I = [1.0/3.0, 1.0/3.0, 1.0/3.0]
             model = Hmm(T, O, I)
             print("\nFiltering:")
-
             predicted_sequence= model.filtering(19, self.boolean_normalized_sequence(source_emission, tollerance_norm))
-
             self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance), predicted_sequence)
 
 
