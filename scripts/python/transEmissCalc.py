@@ -142,6 +142,61 @@ def build_transition_m(data, tollerance):
 
 
 ### EMISSION
+def build_emission_general(hiddenVars, hiddenVars_states, observations, observations_states):
+    freqs = []
+    # inizialization
+    for i in range(0, hiddenVars_states.__len__()):
+        array = []
+        for j in range(0, observations_states.__len__()):
+            array.append(0.0)
+        freqs.append(array)
+
+    # absolute frequences
+    for i in range(0, hiddenVars.__len__()):
+        for j in range(0, hiddenVars_states.__len__()):
+            if str(hiddenVars[i][2]) == hiddenVars_states[j]:
+                for k in range(0, observations_states.__len__()):
+                    if str(observations[i]) == observations_states[k]:
+                        freqs[j][k] += 1
+
+    print("\nFREQUENZE ASSOLUTE:") 
+    print "        ",
+    for i in range(0, observations_states.__len__()):
+        print str(observations_states[i]) + " ",
+    print ""
+    for i in range(0, hiddenVars_states.__len__()):
+        print str(hiddenVars_states[i]) + "   ", 
+        for j in range(0, observations_states.__len__()):
+            print str(freqs[i][j]) + "  ",
+        print ""
+
+    # absolute frequency calculation of hiddenVars_states
+    hiddenVarsStates_freqs = []
+    for i in range(0, hiddenVars_states.__len__()):
+        freq = 0.0
+        for j in range(0, observations_states.__len__()):
+            freq += freqs[i][j]
+        hiddenVarsStates_freqs.append(freq)
+
+
+    # emission model calculation
+    emission_m = freqs
+    for i in range(0, hiddenVars_states.__len__()):
+        for j in range(0, observations_states.__len__()):
+            emission_m[i][j] = emission_m[i][j] / hiddenVarsStates_freqs[i]
+
+
+    print("\nMODELLO DI EMISSIONE:")
+    print "        ",
+    for i in range(0, observations_states.__len__()):
+        print str(observations_states[i]) + " ",
+    print ""
+    for i in range(0, hiddenVars_states.__len__()):
+        print str(hiddenVars_states[i]) + "   ", 
+        for j in range(0, observations_states.__len__()):
+            print str(emission_m[i][j]) + "  ",
+        print ""
+
 
 def build_emission_m(stock, sentiment):
     # [sale&sent+, sale&sent], [stabile&sent+, stabile&sent-] [scende&sent+, scende&sent-]
