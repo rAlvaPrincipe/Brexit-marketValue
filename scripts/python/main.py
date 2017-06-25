@@ -15,7 +15,7 @@ class Interface:
     def calcola(self, widget, data=None):
         calculator = Calculator()
         # use default sentiment_type = variation
-        calculator.start(self.vocabulary_request, "variation")
+        calculator.start(self.vocabulary_request, "variation", 0.001, 0, 0.6)
 
     def delete_event(self, widget, event, data=None):
         # If you return FALSE in the "delete_event" signal handler,
@@ -105,10 +105,12 @@ class Calculator:
         sentiment = matrix.extract(source_emission)
         sequence = []
         for count in range(0, sentiment.__len__()):
-            if sentiment[count][1] > 0:
+            if float(sentiment[count][1]) > 0:
                 sequence.extend([0])
-            elif sentiment[count][1] < 0:
+            elif float(sentiment[count][1]) <= 0:
                 sequence.extend([1])
+
+        
         return sequence
 
     # build a sequence of observation based on sentiment variation
@@ -117,21 +119,22 @@ class Calculator:
         sentiment = self.delta_emission(matrix.extract(source_emission))
         sequence = []
         for count in range(0, sentiment.__len__()):
-            if sentiment[count][1] > 0:
+            if float(sentiment[count][1]) > float(tollerance_var):
                 sequence.extend([0])
-            elif sentiment[count][1] < 0:
+            elif float(sentiment[count][1]) <= float(tollerance_var):
                 sequence.extend([1])
         return sequence
 
     # build a sequence of observation based on normalized sentiment variation
     def boolean_normalized_sequence(self, source_emission, tollerance_norm):
+
         sentiment = matrix.extract(source_emission)
         sentiment = self.normalize(sentiment)
         sequence = []
         for count in range(0, sentiment.__len__()):
-            if sentiment[count] > tollerance_norm:
+            if float(sentiment[count]) > float(tollerance_norm):
                 sequence.extend([0])
-            elif sentiment[count] < tollerance_norm:
+            elif float(sentiment[count]) <= float(tollerance_norm):
                 sequence.extend([1])
         return sequence
 
@@ -148,6 +151,7 @@ class Calculator:
         normalized_list = []
         for count in range(0, float_list.__len__()):
             normalized_list.append((float_list[count] - min_v)/(max_v - min_v))
+
         return normalized_list
 
     #count the correspondence between the real state sequence adn the predicted sequence
@@ -182,7 +186,7 @@ class Calculator:
         source_ext = "../../datasets/Market_values_ext.txt"
 
         # for valzo
-       # source = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values.txt"
+        #source = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values.txt"
         #source_ext = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values_ext.txt"
 
         source_emission = "Sentiment.txt"
@@ -227,7 +231,7 @@ if __name__ == "__main__":
     # USE THIS IF YOU DON'T WANT GUI
 
     calculator = Calculator()
-    # vocabulary = afinn96, afinn111, bing, nrc
+    # vocabulary = afinn96, afinn111, bing, nrc, afinn_bing_base_bing, afinn_bing_base_afinn
     # sentiment_type = standard, variation, normalized
     # tollerance for 3 type of discretization
-    calculator.start("bing", "standard", 0.001, 0, 0.6)
+    calculator.start("bing", "standard", 0.001, 0, 0.7)

@@ -29,7 +29,6 @@ class Hmm:
                 results.append("scende")
             print("_prediction: "+str(out))
             out = self.matrix_multiply(out, self.diagonal(observations[i])) #update step
-
             print("__update: "+str(out))
             out = self.normalize(out) #normalization
 

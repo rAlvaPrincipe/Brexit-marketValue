@@ -207,6 +207,7 @@ def build_emission_m(stock, sentiment):
 
     for count in range(0, stock.__len__()):
         # NB: sentiment[i]=0 -> pos , sentiment[i]=1 -> neg
+
         if stock[count][2] == "sale":
             freqs[0][sentiment[count]] += 1
         elif stock[count][2] == "stabile":
