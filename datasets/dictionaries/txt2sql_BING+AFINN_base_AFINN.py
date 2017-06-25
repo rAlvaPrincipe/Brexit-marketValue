@@ -65,5 +65,5 @@ f.close
 # and write
 f = open('afinn_bing_base_afinn.sql', 'a')
 for word in dictionary:
-    f.write("INSERT INTO bing VALUES (\'"+str(word).replace("'", "\\'")+"\', \'"+str(dictionary[word])+"\');\n")
+    f.write("INSERT INTO afinn_bing_base_afinn VALUES (\'"+str(word).replace("'", "\\'")+"\', \'"+str(dictionary[word])+"\');\n")
 f.close()
