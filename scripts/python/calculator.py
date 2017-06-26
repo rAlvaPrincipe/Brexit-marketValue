@@ -1,5 +1,5 @@
 import transEmissCalc as matrix
-import sentiment_list_by_day as sm
+import sentiment as sm
 import numpy as np
 
 # -*- coding: utf-8 -*-
@@ -116,7 +116,6 @@ class Calculator():
                 '2016/12/19', '2016/12/20', '2016/12/21', '2016/12/22', '2016/12/23',
                 '2016/12/27', '2016/12/28', '2016/12/29', '2016/12/30']
         days_sentiment = {}
-
         vocabulary = sm.retrieveVocabulary(vocabulary_request)
 
         out_file = open("Sentiment.txt", "w")
