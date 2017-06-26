@@ -1,6 +1,8 @@
 import MySQLdb
 import math
 
+## retrieveVocabulary(vocabulary_name) return the database vocabulary as python dictionary
+## eg: retrieveVocabulary(bing) -> {'love':+2, 'hate': -2, 'abacus': 0}
 def retrieveVocabulary(vocabulary_request):
         vocabulary={}
         db = MySQLdb.connect(host="127.0.0.1",
@@ -15,6 +17,7 @@ def retrieveVocabulary(vocabulary_request):
             cursor.execute(query)
             print(query)
             results = cursor.fetchall()
+            # add 'word':'label' in vocabulary for every word in database
             for row in results:
                w = row[0]
                l = int(row[1])
@@ -27,7 +30,8 @@ def retrieveVocabulary(vocabulary_request):
         return vocabulary
 
 
-## sentiment(tweet) return a boolean value for the the sentiment of the tweet
+## sentiment(tweet) return a value for the the sentiment of the tweet
+## eg: sentiment('love love love hate #xyz', {'love':+2, 'hate': -2}) -> 4
 def sentiment(tweet,vocab):
     score = 0                  #sentiment value
     words = tweet.split(' ' )  #split in words
@@ -60,6 +64,7 @@ def day_sentiment(day,vocab):
         results = cursor.fetchall()
         for row in results:
             tweet = str(row[0])
+            # calculate the sentiment of single tweet
             score = sentiment(tweet,vocab)
             if score > 0:
                 pos_daySentiment += 1
@@ -69,5 +74,8 @@ def day_sentiment(day,vocab):
         print("Error tweets: unable to fetch data.")
 
     db.close()
+    # calculate sentiment with simple sentiment logit scale sentiment formula
+    # sentiment = log(sum(positive) / sum(negative))
     daySentiment = float( 1 + pos_daySentiment ) / float( 1 + neg_daySentiment )
+    
     return math.log(daySentiment)
