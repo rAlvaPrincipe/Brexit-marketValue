@@ -7,10 +7,10 @@ def retrieveVocabulary(vocabulary_request):
                              user="root",
                              passwd="root",
                              db="experiments")
-        
+
         # prepare a cursor object using cursor() method
         cursor = db.cursor()
-        query = "SELECT * FROM " + vocabulary_request + ";"
+        query = "SELECT word, label FROM " + vocabulary_request + ";"
         try:
             cursor.execute(query)
             print(query)
@@ -31,7 +31,7 @@ def retrieveVocabulary(vocabulary_request):
 def sentiment(tweet,vocab):
     score = 0                  #sentiment value
     words = tweet.split(' ' )  #split in words
-    
+
     #remove non alpha characters
     for i in range (0, words.__len__()):
         words[i] = filter(str.isalpha, words[i])
@@ -52,13 +52,14 @@ def day_sentiment(day,vocab):
 
     # prepare a cursor object using cursor() method
     cursor = db.cursor()
-
+    query = "SELECT tweet FROM tweets WHERE tweet_date = \'" + day + "\';"
     # Execute SQL SELECT  statement
     try:
-        cursor.execute("SELECT * FROM tweets WHERE tweet_date = \'" + day + "\';")
+        cursor.execute(query)
+        print(query)
         results = cursor.fetchall()
         for row in results:
-            tweet = str(row[1])
+            tweet = str(row[0])
             score = sentiment(tweet,vocab)
             if score > 0:
                 pos_daySentiment += 1
@@ -69,4 +70,4 @@ def day_sentiment(day,vocab):
 
     db.close()
     daySentiment = float( 1 + pos_daySentiment ) / float( 1 + neg_daySentiment )
-    return math.log(daySentiment) 
+    return math.log(daySentiment)
