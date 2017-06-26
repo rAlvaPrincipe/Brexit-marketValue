@@ -87,6 +87,7 @@ class Interface:
 
 class Calculator:
     # compute the sentiment variation
+    # output example: [["day1" 0], ["day2", -0.2332], ["day3", -0.003], ["day4", +1,0003]]
     def delta_emission(self, values):
         deltas = []
         for count in range(0, values.__len__()):
@@ -94,13 +95,15 @@ class Calculator:
             column.append(values[count][0])
             if count == 0:
                 column.append("0")
-            if count != 0:
+            elif count > 0:
                 column.append((values[count][1] - values[count - 1][1]))
             deltas.append(column)
         return deltas
 
+
     # builds a sequence of observation with only positive/negative sentiment
     # it uses 0 for pos and 1 for negs 
+    # output example: [1, 0, 0, 0, 0, 1, 0, ...]
     def boolean_standard_sequence(self, source_emission):
         sentiment = matrix.extract(source_emission)
         sequence = []
@@ -123,6 +126,24 @@ class Calculator:
                 sequence.extend([0])
             elif float(sentiment[count][1]) <= float(tollerance_var):
                 sequence.extend([1])
+        return sequence
+
+
+    # build a sequence of observation based on sentiment variation
+    # output example: ["nullo", "sale", "sale", "scende", "stabile"]
+    def boolean_variation_sequence2(self, source_emission, tollerance_var):
+        sentiment = self.delta_emission(matrix.extract(source_emission))
+        sequence = []
+        for count in range(0, sentiment.__len__()):
+            if count == 0:
+                sequence.append("nullo")
+            elif abs(sentiment[count][1]) <= float(tollerance_var):
+                sequence.append("stabile")
+            elif sentiment[count][1] > 0:
+                sequence.append("sale")
+            else:
+                sequence.append("scende")
+
         return sequence
 
     # build a sequence of observation based on normalized sentiment variation
@@ -186,41 +207,47 @@ class Calculator:
         source_ext = "../../datasets/Market_values_ext.txt"
 
         # for valzo
-        #source = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values.txt"
+        # source = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values.txt"
         #source_ext = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values_ext.txt"
 
         source_emission = "Sentiment.txt"
-
         predicted_sequence=[]
+        T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
+        I = [1.0/3.0, 1.0/3.0, 1.0/3.0]
+        delta_stock = matrix.delta(matrix.extract(source), tollerance)
+
         if sentiment_type == "standard":
-            T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
-            O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_standard_sequence(source_emission))
-            I = [1.0/3.0, 1.0/3.0, 1.0/3.0]
+            #O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_standard_sequence(source_emission))
+            O = matrix.build_emission_generic(delta_stock, 
+                                          [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]], 
+                                          self.boolean_standard_sequence(source_emission),
+                                          [["sent+", "0"], ["sent-", "1"]]
+                                          )
             model = Hmm(T, O, I)
             print("Filtering:")
             predicted_sequence = model.filtering(19, self.boolean_standard_sequence(source_emission))
-            self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance), predicted_sequence)
 
         elif sentiment_type == "variation":
             # if you want to use sentiment variation:
-            T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
-            O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_variation_sequence(source_emission, tollerance_var))
-            I = [1.0/3.0, 1.0/3.0, 1.0/3.0]
+            # O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_variation_sequence(source_emission, tollerance_var))
+            O = matrix.build_emission_generic(delta_stock, 
+                                          [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]], 
+                                          self.boolean_variation_sequence2(source_emission, tollerance_var),
+                                          [["sentSale", "sale"], ["sentStabile", "scende"], ["sentScende", "scende"]]
+                                          )
             model = Hmm(T, O, I)
             print("Filtering:")
             predicted_sequence = model.filtering(19, self.boolean_variation_sequence(source_emission, tollerance_var))
-            self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance), predicted_sequence)
 
         elif sentiment_type == "normalized":
             # if you want to use normalized variation:
-            T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
             O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_normalized_sequence(source_emission, tollerance_norm))
-            I = [1.0/3.0, 1.0/3.0, 1.0/3.0]
+
             model = Hmm(T, O, I)
             print("\nFiltering:")
-            predicted_sequence= model.filtering(19, self.boolean_normalized_sequence(source_emission, tollerance_norm))
-            self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance), predicted_sequence)
+            predicted_sequence= model.filtering(19, self.boolean_normalized_sequence(source_emission, tollerance_norm))   
 
+        self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance), predicted_sequence)
 
 if __name__ == "__main__":
     # USE THIS IF YOU WANT GUI

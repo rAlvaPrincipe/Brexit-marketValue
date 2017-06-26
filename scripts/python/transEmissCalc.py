@@ -109,7 +109,7 @@ def build_transition_m(data, tollerance):
             else:
                 freqs[2][2] += 1
 
-    print("\nFREQUENZE ASSOLLUTE:")
+    print("\nFREQUENZE ASSOLLUTE TRANSITION:")
     print "sale", sale
     print "stabile", stabile
     print "scende", scende
@@ -142,60 +142,76 @@ def build_transition_m(data, tollerance):
 
 
 ### EMISSION
-def build_emission_general(hiddenVars, hiddenVars_states, observations, observations_states):
+#input examples: hiddenVars = [["day1", 0, "nullo"], ["day2", +0,0423, "sale"], ["day3", "-0.0001", "stabile"], ...]
+#                hiddenVars_labels = [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]],
+#                observations =  [0, 1, 1, 0, ...]
+#                observations_labels = [["sent+", "0"], ["sent-", "1"]]
+
+def build_emission_generic(hiddenVars, hiddenVars_labels, observations, observations_labels):
     freqs = []
     # inizialization
-    for i in range(0, hiddenVars_states.__len__()):
+    for i in range(0, hiddenVars_labels.__len__()):
         array = []
-        for j in range(0, observations_states.__len__()):
+        for j in range(0, observations_labels.__len__()):
             array.append(0.0)
         freqs.append(array)
 
     # absolute frequences
     for i in range(0, hiddenVars.__len__()):
-        for j in range(0, hiddenVars_states.__len__()):
-            if str(hiddenVars[i][2]) == hiddenVars_states[j]:
-                for k in range(0, observations_states.__len__()):
-                    if str(observations[i]) == observations_states[k]:
+        for j in range(0, hiddenVars_labels.__len__()):
+            if str(hiddenVars[i][2]) == hiddenVars_labels[j][1]:
+                for k in range(0, observations_labels.__len__()):
+                    if str(observations[i]) == observations_labels[k][1]:
                         freqs[j][k] += 1
 
-    print("\nFREQUENZE ASSOLUTE:") 
-    print "        ",
-    for i in range(0, observations_states.__len__()):
-        print str(observations_states[i]) + " ",
-    print ""
-    for i in range(0, hiddenVars_states.__len__()):
-        print str(hiddenVars_states[i]) + "   ", 
-        for j in range(0, observations_states.__len__()):
-            print str(freqs[i][j]) + "  ",
-        print ""
 
-    # absolute frequency calculation of hiddenVars_states
+    # absolute frequency calculation of hiddenVars_labels
     hiddenVarsStates_freqs = []
-    for i in range(0, hiddenVars_states.__len__()):
+    for i in range(0, hiddenVars_labels.__len__()):
         freq = 0.0
-        for j in range(0, observations_states.__len__()):
+        for j in range(0, observations_labels.__len__()):
             freq += freqs[i][j]
         hiddenVarsStates_freqs.append(freq)
 
 
+    print("\nFREQUENZE ASSOLUTE EMISSIONE:") 
+    for i in range(0, hiddenVarsStates_freqs.__len__()):
+        print str(hiddenVars_labels[i][0]) + "   " + str(hiddenVarsStates_freqs[i])
+
+    print "        ",
+    for i in range(0, observations_labels.__len__()):
+        print str(observations_labels[i][0]) + " ",
+    print ""
+    for i in range(0, hiddenVars_labels.__len__()):
+        print str(hiddenVars_labels[i][0]) + "   ", 
+        for j in range(0, observations_labels.__len__()):
+            print str(freqs[i][j]) + "  ",
+        print ""
+
+
     # emission model calculation
     emission_m = freqs
-    for i in range(0, hiddenVars_states.__len__()):
-        for j in range(0, observations_states.__len__()):
-            emission_m[i][j] = emission_m[i][j] / hiddenVarsStates_freqs[i]
+    for i in range(0, hiddenVars_labels.__len__()):
+        for j in range(0, observations_labels.__len__()):
+            if hiddenVarsStates_freqs[i] > 0:
+                emission_m[i][j] = emission_m[i][j] / hiddenVarsStates_freqs[i]
+            else:
+                emission_m[i][j] = 0
+
 
 
     print("\nMODELLO DI EMISSIONE:")
     print "        ",
-    for i in range(0, observations_states.__len__()):
-        print str(observations_states[i]) + " ",
+    for i in range(0, observations_labels.__len__()):
+        print str(observations_labels[i][0]) + " ",
     print ""
-    for i in range(0, hiddenVars_states.__len__()):
-        print str(hiddenVars_states[i]) + "   ", 
-        for j in range(0, observations_states.__len__()):
+    for i in range(0, hiddenVars_labels.__len__()):
+        print str(hiddenVars_labels[i][0]) + "   ", 
+        for j in range(0, observations_labels.__len__()):
             print str(emission_m[i][j]) + "  ",
         print ""
+
+    return emission_m
 
 
 def build_emission_m(stock, sentiment):
@@ -207,7 +223,6 @@ def build_emission_m(stock, sentiment):
 
     for count in range(0, stock.__len__()):
         # NB: sentiment[i]=0 -> pos , sentiment[i]=1 -> neg
-
         if stock[count][2] == "sale":
             freqs[0][sentiment[count]] += 1
         elif stock[count][2] == "stabile":
@@ -215,7 +230,7 @@ def build_emission_m(stock, sentiment):
         elif stock[count][2] == "scende":
             freqs[2][sentiment[count]] += 1
 
-    print("\nFREQUENZE ASSOLUTE:")
+    print("\nFREQUENZE ASSOLUTE EMISSIONE:")
     print "       ", "Sent+", "Sent-"
     print "sale     ", freqs[0][0], " ", freqs[0][1]
     print "stabile  ", freqs[1][0], " ", freqs[1][1]
