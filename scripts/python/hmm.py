@@ -74,7 +74,9 @@ class Hmm:
     def describe(self):
         print "Transition table : ", self.T,  ", Obs: ", self.O,", prob: ", self.I
 
-##you can use this code in main_no_gtk!
+
+
+## how to use: example code
 
 #transition_table = [[0.25, 0.25, 0.50],
 #                   [0.40, 0.20, 0.40],
