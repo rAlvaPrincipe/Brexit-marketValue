@@ -1,4 +1,5 @@
 import numpy as np
+# -*- coding: utf-8 -*-
 
 # Hmm class describe a Hidden Markov Model
 class Hmm:
@@ -74,7 +75,109 @@ class Hmm:
     def describe(self):
         print "Transition table : ", self.T,  ", Obs: ", self.O,", prob: ", self.I
 
+    ####VITERBI
 
+
+    def viterbi(self, observations_seq):
+
+        # il modello e' costituito da 3 vettori che rappresentano le probabilità per ogni stato
+        p_sale = []
+        p_stabile = []
+        p_scende = []
+
+        # inizializzo i vettori moltiplicando I per la prima osservazione
+        # ogni stato viene inserito come coppia [stato precedente, probabilità]
+        # il primo stato precedente viene assegnato a 0
+        p_sale.append([0, float(self.O[0][observations_seq[0]]) * float(self.I[0])])
+        p_stabile.append([0, float(self.O[1][observations_seq[0]] * float(self.I[1]))])
+        p_scende.append([0, float(self.O[2][observations_seq[0]] * float(self.I[2]))])
+
+        # calcolo in avanti le probabilità
+        for i in range(1, observations_seq.__len__()):
+
+            # calculate for state "sale" (sale = 0) stato_prec*T*O
+            p_sale_temp = float(p_sale[i - 1][1]) * self.T[0][0] * self.O[0][observations_seq[i]]
+            p_stabile_temp = float(p_stabile[i - 1][1]) * self.T[0][1] * self.O[1][observations_seq[i]]
+            p_scende_temp = float(p_scende[i - 1][1]) * self.T[0][2] * self.O[2][observations_seq[i]]
+
+            # seleziono il massimo e lo inserisco nel vettore
+            val_max = max(p_sale_temp, p_stabile_temp, p_scende_temp)
+
+            if (val_max == p_sale_temp):
+                p_sale.append([0, p_sale_temp])
+            elif (val_max == p_stabile_temp):
+                p_sale.append([1, p_stabile_temp])
+            elif (val_max == p_scende_temp):
+                p_sale.append([2, p_scende_temp])
+
+            # calculate for state stabile (stabile = 1)
+            p_sale_temp = float(p_sale[i - 1][1]) * self.T[1][0] * self.O[0][observations_seq[i]]
+            p_stabile_temp = float(p_stabile[i - 1][1]) * self.T[1][1] * self.O[1][observations_seq[i]]
+            p_scende_temp = float(p_scende[i - 1][1]) * self.T[1][2] * self.O[2][observations_seq[i]]
+
+            val_max = max(p_sale_temp, p_stabile_temp, p_scende_temp)
+
+            if (val_max == p_sale_temp):
+                p_stabile.append([0, p_sale_temp])
+            elif (val_max == p_stabile_temp):
+                p_stabile.append([1, p_stabile_temp])
+            elif (val_max == p_scende_temp):
+                p_stabile.append([2, p_scende_temp])
+
+            # calculate for state scende (stabile = 2)
+            p_sale_temp = float(p_sale[i - 1][1]) * self.T[2][0] * self.O[0][observations_seq[i]]
+            p_stabile_temp = float(p_stabile[i - 1][1]) * self.T[2][1] * self.O[1][observations_seq[i]]
+            p_scende_temp = float(p_scende[i - 1][1]) * self.T[2][2] * self.O[2][observations_seq[i]]
+
+            val_max = max(p_sale_temp, p_stabile_temp, p_scende_temp)
+
+            if (val_max == p_sale_temp):
+                p_scende.append([0, p_sale_temp])
+            elif (val_max == p_stabile_temp):
+                p_scende.append([1, p_stabile_temp])
+            elif (val_max == p_scende_temp):
+                p_scende.append([2, p_scende_temp])
+
+        print("\nsale :" + str(p_sale) +
+              "\nstabile :" + str(p_stabile) +
+              "\nscende :" + str(p_scende))
+
+        best_sequence = []
+        j = 0
+        state = 0
+
+        # scelgo lo stato da cui partire per il backward
+        val_max = max(p_sale[j][1], p_stabile[j][1], p_scende[j][1])
+
+        # inserisco lo stato di partenza
+        if (val_max == p_sale[observations_seq.__len__() - 1][1]):
+            best_sequence.append("sale")
+            state = p_sale[observations_seq.__len__() - 1][0]
+        elif (val_max == p_stabile[observations_seq.__len__() - 1][1]):
+            best_sequence.append("stabile")
+            state = p_stabile[observations_seq.__len__() - 1][0]
+        elif (val_max == p_scende[observations_seq.__len__() - 1][1]):
+            best_sequence.append("scende")
+            state = p_scende[observations_seq.__len__() - 1][0]
+
+        # percorro all'indietro i 3 vettori per seguire il percorso migliore
+        for count in range(1, observations_seq.__len__()):
+            j = observations_seq.__len__() - count
+            next_state = 0
+            if (state == 0):
+                best_sequence.append("sale")
+                next_state = p_sale[j][0]
+            elif (state == 1):
+                best_sequence.append("stabile")
+                next_state = p_stabile[j][0]
+            elif (state == 2):
+                best_sequence.append("scende")
+                next_state = p_scende[j][0]
+
+            state = next_state
+
+        # ritorno la sequenza invertita
+        return (best_sequence[::-1])
 
 ## how to use: example code
 

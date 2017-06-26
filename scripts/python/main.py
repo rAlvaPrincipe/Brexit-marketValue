@@ -3,6 +3,8 @@ import sentiment_list_by_day as sm
 import pygtk
 import numpy as np
 
+# -*- coding: utf-8 -*-
+
 pygtk.require('2.0')
 import gtk
 from hmm import Hmm
@@ -85,7 +87,8 @@ class Interface:
         gtk.main()
 
 
-class Calculator:
+class Calculator():
+
     # compute the sentiment variation
     # output example: [["day1" 0], ["day2", -0.2332], ["day3", -0.003], ["day4", +1,0003]]
     def delta_emission(self, values):
@@ -175,17 +178,17 @@ class Calculator:
 
         return normalized_list
 
-    #count the correspondence between the real state sequence adn the predicted sequence
+        # count the correspondence between the real state sequence adn the predicted sequence
+
     def correspondence(self, state, prediction):
         count_corr = 0.0
         for count in range(1, state.__len__()):
-            if(str(state[count])==str(prediction[count-1])):
+            if (str(state[count]) == str(prediction[count - 1])):
                 count_corr += 1
 
-        print("\nThe correspondence obteined is "+str(count_corr/ float(state.__len__() - 1)))
-        print(state)
+        print("\n" + str(state))
         print(prediction)
-
+        return str(count_corr / float(state.__len__() - 1))
 
     def start(self, vocabulary_request, sentiment_type, tollerance, tollerance_var, tollerance_norm):
         days = ['2016/12/05', '2016/12/06', '2016/12/07', '2016/12/08', '2016/12/09',
@@ -196,69 +199,101 @@ class Calculator:
 
         vocabulary = sm.retrieveVocabulary(vocabulary_request)
 
-        out_file = open("Sentiment.txt", "w")
-        for i in range(0, days.__len__()):
-            days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
-            out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
-            print(days_sentiment[i])
-        out_file.close()
+        # out_file = open("Sentiment.txt", "w")
+        # for i in range(0, days.__len__()):
+        #    days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
+        #    out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
+        #    print(days_sentiment[i])
+        # out_file.close()
 
-        source = "../../datasets/Market_values.txt"
-        source_ext = "../../datasets/Market_values_ext.txt"
+        # source = "../../datasets/Market_values.txt"
+        # source_ext = "../../datasets/Market_values_ext.txt"
 
         # for valzo
-        # source = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values.txt"
-        #source_ext = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values_ext.txt"
+        source = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values.txt"
+        source_ext = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values_ext.txt"
 
         source_emission = "Sentiment.txt"
-        predicted_sequence=[]
+        predicted_sequence_filtering = []
+        predicted_sequence_viterbi = []
+
         T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
-        I = [1.0/3.0, 1.0/3.0, 1.0/3.0]
+        I = [1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0]
         delta_stock = matrix.delta(matrix.extract(source), tollerance)
 
         if sentiment_type == "standard":
-            #O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_standard_sequence(source_emission))
-            O = matrix.build_emission_generic(delta_stock, 
-                                          [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]], 
-                                          self.boolean_standard_sequence(source_emission),
-                                          [["sent+", "0"], ["sent-", "1"]]
-                                          )
+            # O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_standard_sequence(source_emission))
+            O = matrix.build_emission_generic(delta_stock,
+                                              [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]],
+                                              self.boolean_standard_sequence(source_emission),
+                                              [["sent+", "0"], ["sent-", "1"]]
+                                              )
             model = Hmm(T, O, I)
-            print("Filtering:")
-            predicted_sequence = model.filtering(19, self.boolean_standard_sequence(source_emission))
+            print("\n\nFiltering:")
+            predicted_sequence_filtering = model.filtering(19, self.boolean_standard_sequence(source_emission))
+            print("L'accuratezza del filtraggio e' " + str(
+                self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
+                                    predicted_sequence_filtering)))
+
+            print("\n\nViterbi:")
+            predicted_sequence_viterbi = model.viterbi(self.boolean_standard_sequence(source_emission))
+            print("L'accuratezza di Viterbi e' " + str(
+                self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
+                                    predicted_sequence_viterbi)))
 
         elif sentiment_type == "variation":
             # if you want to use sentiment variation:
             # O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_variation_sequence(source_emission, tollerance_var))
-            O = matrix.build_emission_generic(delta_stock, 
-                                          [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]], 
-                                          self.boolean_variation_sequence2(source_emission, tollerance_var),
-                                          [["sentSale", "sale"], ["sentStabile", "scende"], ["sentScende", "scende"]]
-                                          )
+            O = matrix.build_emission_generic(delta_stock,
+                                              [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]],
+                                              self.boolean_variation_sequence2(source_emission, tollerance_var),
+                                              [["sentSale", "sale"], ["sentStabile", "scende"],
+                                               ["sentScende", "scende"]]
+                                              )
             model = Hmm(T, O, I)
-            print("Filtering:")
-            predicted_sequence = model.filtering(19, self.boolean_variation_sequence(source_emission, tollerance_var))
+
+            print("\n\nFiltering:")
+            predicted_sequence_filtering = model.filtering(19, self.boolean_variation_sequence(source_emission,
+                                                                                               tollerance_var))
+            print("L'accuratezza del filtraggio e' " +
+                  str(self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
+                                          predicted_sequence_filtering)))
+
+            print("\n\nViterbi:")
+            predicted_sequence_viterbi = model.viterbi(self.boolean_variation_sequence(source_emission, tollerance_var))
+            print("L'accuratezza di viterbi e' " +
+                  str(self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
+                                          predicted_sequence_viterbi)))
 
         elif sentiment_type == "normalized":
             # if you want to use normalized variation:
-            O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_normalized_sequence(source_emission, tollerance_norm))
+            O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance),
+                                        self.boolean_normalized_sequence(source_emission, tollerance_norm))
 
             model = Hmm(T, O, I)
-            print("\nFiltering:")
-            predicted_sequence= model.filtering(19, self.boolean_normalized_sequence(source_emission, tollerance_norm))   
-
-        self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance), predicted_sequence)
+            print("\n\nFiltering:")
+            predicted_sequence_filtering = model.filtering(19, self.boolean_normalized_sequence(source_emission,
+                                                                                                tollerance_norm))
+            print("L'accuratezza del filtraggio e' " + str(
+                self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
+                                    predicted_sequence_filtering)))
+            print("\n\nViterbi:")
+            predicted_sequence_viterbi = model.viterbi(
+                self.boolean_normalized_sequence(source_emission, tollerance_norm))
+            print("L'accuratezza di Viterbi e' " +
+                  str(self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
+                                          predicted_sequence_viterbi)))
 
 if __name__ == "__main__":
-    # USE THIS IF YOU WANT GUI
+        # USE THIS IF YOU WANT GUI
 
-    # interface = Interface()
-    # interface.main()
+        # interface = Interface()
+        # interface.main()
 
-    # USE THIS IF YOU DON'T WANT GUI
+        # USE THIS IF YOU DON'T WANT GUI
 
-    calculator = Calculator()
-    # vocabulary = afinn96, afinn111, bing, nrc, afinn_bing_base_bing, afinn_bing_base_afinn
-    # sentiment_type = standard, variation, normalized
-    # tollerance for 3 type of discretization
-    calculator.start("bing", "standard", 0.001, 0, 0.7)
+        calculator = Calculator()
+        # vocabulary = afinn96, afinn111, bing, nrc, afinn_bing_base_bing, afinn_bing_base_afinn
+        # sentiment_type = standard, variation, normalized
+        # tollerance for 3 type of discretization
+        calculator.start("bing", "standard", 0.001, 0, 0.7)
