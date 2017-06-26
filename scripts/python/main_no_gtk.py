@@ -32,6 +32,10 @@ def retrieve_dictionary(name):
         query = "SELECT word, label FROM afinn96"
     elif name == "afinn111":
         query = "SELECT word, label FROM afinn111"
+    elif name == "afinn_bing_base_afinn":
+        query = "SELECT word, label FROM afinn_bing_base_afinn"
+    elif name == "afinn_bing_base_bing":
+        query = "SELECT word, label FROM afinn_bing_base_bing"    
 
     # exec the query and populate the dictionary
     try:
@@ -265,4 +269,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
