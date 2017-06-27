@@ -1,4 +1,4 @@
-import transEmissCalc as matrix
+import transEmissCalc as mt
 import sentiment as sm
 import numpy as np
 
@@ -8,27 +8,12 @@ from hmm import Hmm
 
 class Calculator():
 
-    # compute the sentiment variation
-    # output example: [["day1" 0], ["day2", -0.2332], ["day3", -0.003], ["day4", +1,0003]]
-    def delta_emission(self, values):
-        deltas = []
-        for count in range(0, values.__len__()):
-            column = []
-            column.append(values[count][0])
-            if count == 0:
-                column.append("0")
-            elif count > 0:
-                column.append((values[count][1] - values[count - 1][1]))
-            deltas.append(column)
-        return deltas
-
-
     # builds a sequence of observation with only positive/negative sentiment
     # it uses 0 for pos and 1 for negs 
     # input: source_emission = "../file_path/.."
     # output: [1, 0, 0, 0, 0, 1, 0, ...]
     def boolean_standard_sequence(self, source_emission):
-        sentiment = matrix.extract(source_emission)
+        sentiment = mt.extract(source_emission)
         sequence = []
         for count in range(0, sentiment.__len__()):
             if sentiment[count][1] > 0:
@@ -41,37 +26,19 @@ class Calculator():
     # build a sequence of observation based on sentiment variation
     # it uses 0 for sale and 1 for scende
     def boolean_variation_sequence(self, source_emission, tollerance_var):
-        sentiment = self.delta_emission(matrix.extract(source_emission))
+        sentiment = mt.delta_labels(source_emission, tollerance_var, 1) 
         sequence = []
         for count in range(0, sentiment.__len__()):
-            if float(sentiment[count][1]) > float(tollerance_var):
+            if float(sentiment[count]) > float(tollerance_var):
                 sequence.extend([0])
-            elif float(sentiment[count][1]) <= float(tollerance_var):
+            elif float(sentiment[count]) <= float(tollerance_var):
                 sequence.extend([1])
         return sequence
 
 
-    # build a sequence of observation based on sentiment variation
-    # output example: ["nullo", "sale", "sale", "scende", "stabile"]
-    def boolean_variation_sequence2(self, source_emission, tollerance_var):
-        sentiment = self.delta_emission(matrix.extract(source_emission))
-        sequence = []
-        for count in range(0, sentiment.__len__()):
-            if count == 0:
-                sequence.append("nullo")
-            elif abs(sentiment[count][1]) <= float(tollerance_var):
-                sequence.append("stabile")
-            elif sentiment[count][1] > 0:
-                sequence.append("sale")
-            else:
-                sequence.append("scende")
-
-        return sequence
-
     # build a sequence of observation based on normalized sentiment variation
     def boolean_normalized_sequence(self, source_emission, tollerance_norm):
-
-        sentiment = matrix.extract(source_emission)
+        sentiment = mt.extract(source_emission)
         sentiment = self.normalize(sentiment)
         sequence = []
         for count in range(0, sentiment.__len__()):
@@ -161,12 +128,12 @@ class Calculator():
         predicted_sequence_filtering = []
         predicted_sequence_viterbi = []
 
-        T = matrix.build_transition_m(matrix.extract(source_ext), tollerance)
+        T = mt.build_transition_m(mt.extract(source_ext), tollerance)
         I = [1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0]
-        delta_stock = matrix.delta(matrix.extract(source), tollerance)
+        delta_stock = mt.delta(mt.extract(source), tollerance)
 
         if sentiment_type == "standard":
-            O = matrix.build_emission_generic(delta_stock,
+            O = mt.build_emission_generic(delta_stock,
                                               [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]],
                                               self.boolean_standard_sequence(source_emission),
                                               [["sent+", "0"], ["sent-", "1"]]
@@ -175,50 +142,51 @@ class Calculator():
             print("\n\nFiltering:")
             predicted_sequence_filtering = model.filtering(19, self.boolean_standard_sequence(source_emission))
             print("L'accuratezza del filtraggio e' " + str(
-                self.correspondence(matrix.delta(matrix.extract(source), tollerance),
-                                    predicted_sequence_filtering)))
+                self.correspondence(mt.delta(mt.extract(source), tollerance), predicted_sequence_filtering)))
+            
             print("L'accuratezza rilassata del filtraggio e' " + str(
-                self.correspondence_relaxed(matrix.delta(matrix.extract(source), tollerance),
+                self.correspondence_relaxed(mt.delta(mt.extract(source), tollerance),
                                             predicted_sequence_filtering)))
 
             print("\n\nViterbi:")
             predicted_sequence_viterbi = model.viterbi(self.boolean_standard_sequence(source_emission))
             print("L'accuratezza di Viterbi e' " + str(
-                self.correspondence(matrix.delta(matrix.extract(source), tollerance),
+                self.correspondence(mt.delta(mt.extract(source), tollerance),
                                     predicted_sequence_viterbi)))
             print("L'accuratezza rilassata di Viterbi e' " + str(
-                self.correspondence_relaxed(matrix.delta(matrix.extract(source), tollerance),
+                self.correspondence_relaxed(mt.delta(mt.extract(source), tollerance),
                                             predicted_sequence_viterbi)))
         elif sentiment_type == "variation":
-            O = matrix.build_emission_generic(delta_stock,
+            O = mt.build_emission_generic(delta_stock,
                                               [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]],
-                                              self.boolean_variation_sequence2(source_emission, tollerance_var),
+                                              mt.delta_labels(source_emission, tollerance_var, 2),
                                               [["sentSale", "sale"], ["sentStabile", "scende"],
                                                ["sentScende", "scende"]]
                                               )
+            mt.delta(mt.extract(source_emission), 0.0)
             model = Hmm(T, O, I)
 
             print("\n\nFiltering:")
             predicted_sequence_filtering = model.filtering(19, self.boolean_variation_sequence(source_emission,
                                                                                                tollerance_var))
             print("L'accuratezza del filtraggio e' " +
-                  str(self.correspondence(matrix.delta(matrix.extract(source), tollerance),
+                  str(self.correspondence(mt.delta(mt.extract(source), tollerance),
                                           predicted_sequence_filtering)))
             print("L'accuratezza rilassata del filtraggio e' " +
-                  str(self.correspondence_relaxed(matrix.delta(matrix.extract(source), tollerance),
+                  str(self.correspondence_relaxed(mt.delta(mt.extract(source), tollerance),
                                                   predicted_sequence_filtering)))
 
             print("\n\nViterbi:")
             predicted_sequence_viterbi = model.viterbi(self.boolean_variation_sequence(source_emission, tollerance_var))
             print("L'accuratezza di viterbi e' " +
-                  str(self.correspondence(matrix.delta(matrix.extract(source), tollerance),
+                  str(self.correspondence(mt.delta(mt.extract(source), tollerance),
                                           predicted_sequence_viterbi)))
             print("L'accuratezza rilassata di viterbi e' " +
-                  str(self.correspondence_relaxed(matrix.delta(matrix.extract(source), tollerance),
+                  str(self.correspondence_relaxed(mt.delta(mt.extract(source), tollerance),
                                                   predicted_sequence_viterbi)))
 
         elif sentiment_type == "normalized":
-            O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance),
+            O = mt.build_emission_m(mt.delta(mt.extract(source), tollerance),
                                         self.boolean_normalized_sequence(source_emission, tollerance_norm))
 
             model = Hmm(T, O, I)
@@ -226,18 +194,19 @@ class Calculator():
             predicted_sequence_filtering = model.filtering(19, self.boolean_normalized_sequence(source_emission,
                                                                                                 tollerance_norm))
             print("L'accuratezza del filtraggio e' " + str(
-                self.correspondence(matrix.delta(matrix.extract(source), tollerance),
+                self.correspondence(mt.delta(mt.extract(source), tollerance),
                                     predicted_sequence_filtering)))
             print("L'accuratezza rilassata del filtraggio e' " + str(
-                self.correspondence_relaxed(matrix.delta(matrix.extract(source), tollerance),
+                self.correspondence_relaxed(mt.delta(mt.extract(source), tollerance),
                                             predicted_sequence_filtering)))
             print("\n\nViterbi:")
             predicted_sequence_viterbi = model.viterbi(
                 self.boolean_normalized_sequence(source_emission, tollerance_norm))
             print("L'accuratezza di Viterbi e' " +
-                  str(self.correspondence(matrix.delta(matrix.extract(source), tollerance),
+                  str(self.correspondence(mt.delta(mt.extract(source), tollerance),
                                           predicted_sequence_viterbi)))
             print("L'accuratezza rilassata di Viterbi e' " +
-                  str(self.correspondence_relaxed(matrix.delta(matrix.extract(source), tollerance),
+                  str(self.correspondence_relaxed(mt.delta(mt.extract(source), tollerance),
                                                   predicted_sequence_viterbi)))
+
 

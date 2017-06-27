@@ -20,7 +20,7 @@ def extract(path):
 ## delta(day_t) = day_t - day_t-1
 ## input: values = [["Dec 05, 2016", 1.1971], ["Dec 06, 2016", 1.1832], ...]
 ##        tollerance = 0.001, used to decide if a variation is to be considered "stable"
-## output: [["Dec 05, 2016", 0, "nullo"], ["Dec 06, 2016", -0.0139, "scende"]]
+## output: [["Dec 05, 2016", 0, "nullo"], ["Dec 06, 2016", -0.0139, "scende"]..]
 ## notice that delta(day_1) is setted to the default variation and label: 0 , "nullo"
 def delta(values, tollerance):
     deltas = []
@@ -49,6 +49,19 @@ def delta(values, tollerance):
     print(state_sequence)
 
     return deltas
+
+
+## Returns only the column of interest of the delta function output
+## input: values: /...file_path/
+##        tollerance = 0.001
+##        selector = 1
+## output: [0, +0.0045, -0.014, -0.001, ...]
+def delta_labels(values, tollerance, selector):
+    sequence = []
+    deltas = delta(extract(values), tollerance)
+    for i in range(0, deltas.__len__()):
+        sequence.append(deltas[i][selector])
+    return sequence
 
 
 # provvisorio
