@@ -55,7 +55,7 @@ def main():
             tweet_text = extractText(line)
             tweet_date = extractDate(line)
 
-            if tweet_text != 0:
+            if tweet_text != 0 && tweet_text is not None:
                 tweet_text = _removeNonAscii(tweet_text)
                 tweet_text = str(tweet_text).replace("'", "\\'")
                 counter += 1
