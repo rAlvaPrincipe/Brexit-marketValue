@@ -25,17 +25,17 @@ class Calculator():
 
     # builds a sequence of observation with only positive/negative sentiment
     # it uses 0 for pos and 1 for negs 
-    # output example: [1, 0, 0, 0, 0, 1, 0, ...]
+    # input: source_emission = "../file_path/.."
+    # output: [1, 0, 0, 0, 0, 1, 0, ...]
     def boolean_standard_sequence(self, source_emission):
         sentiment = matrix.extract(source_emission)
         sequence = []
         for count in range(0, sentiment.__len__()):
-            if float(sentiment[count][1]) > 0:
+            if sentiment[count][1] > 0:
                 sequence.extend([0])
-            elif float(sentiment[count][1]) <= 0:
-                sequence.extend([1])
+            elif sentiment[count][1] <= 0:
+                sequence.extend([1]) 
 
-        
         return sequence
 
     # build a sequence of observation based on sentiment variation
@@ -102,27 +102,36 @@ class Calculator():
     def correspondence(self, state, prediction):
         count_corr = 0.0
         for count in range(1, state.__len__()):
-            if (str(state[count]) == str(prediction[count - 1])):
+            if (str(state[count][2]) == str(prediction[count - 1])):
                 count_corr += 1
 
-        print("\n" + str(state))
+        print "[",
+        for i in range(0, state.__len__()):
+            print( str(state[i][2]) +" "),
+        print  "]"
+
         print(prediction)
         return str(count_corr / float(state.__len__() - 1))
 
     def correspondence_relaxed(self, state, prediction):
         count_corr = 0.0
         for count in range(1, state.__len__()):
-            if (str(state[count]) == "sale" and (
+            if (str(state[count][2]) == "sale" and (
                     str(prediction[count - 1]) == "sale" or str(prediction[count - 1]) == "stabile")):
                 count_corr += 1
-            elif (str(state[count]) == "scende" and (
+            elif (str(state[count][2]) == "scende" and (
                     str(prediction[count - 1]) == "scende" or str(prediction[count - 1]) == "stabile")):
                 count_corr += 1
-            elif (str(state[count]) == "stabile" and (
+            elif (str(state[count][2]) == "stabile" and (
                         str(prediction[count - 1]) == "stabile" or str(prediction[count - 1]) == "sale" or str(
                     prediction[count - 1]) == "scende")):
                 count_corr += 1
-        print("\n" + str(state))
+        
+        print "[",
+        for i in range(0, state.__len__()):
+            print( str(state[i][2]) +" "),
+        print  "]"
+
         print(prediction)
         return str(count_corr / float(state.__len__() - 1))
 
@@ -157,7 +166,6 @@ class Calculator():
         delta_stock = matrix.delta(matrix.extract(source), tollerance)
 
         if sentiment_type == "standard":
-            # O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_standard_sequence(source_emission))
             O = matrix.build_emission_generic(delta_stock,
                                               [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]],
                                               self.boolean_standard_sequence(source_emission),
@@ -167,23 +175,21 @@ class Calculator():
             print("\n\nFiltering:")
             predicted_sequence_filtering = model.filtering(19, self.boolean_standard_sequence(source_emission))
             print("L'accuratezza del filtraggio e' " + str(
-                self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
+                self.correspondence(matrix.delta(matrix.extract(source), tollerance),
                                     predicted_sequence_filtering)))
             print("L'accuratezza rilassata del filtraggio e' " + str(
-                self.correspondence_relaxed(matrix.state_sequence(matrix.extract(source), tollerance),
+                self.correspondence_relaxed(matrix.delta(matrix.extract(source), tollerance),
                                             predicted_sequence_filtering)))
 
             print("\n\nViterbi:")
             predicted_sequence_viterbi = model.viterbi(self.boolean_standard_sequence(source_emission))
             print("L'accuratezza di Viterbi e' " + str(
-                self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
+                self.correspondence(matrix.delta(matrix.extract(source), tollerance),
                                     predicted_sequence_viterbi)))
             print("L'accuratezza rilassata di Viterbi e' " + str(
-                self.correspondence_relaxed(matrix.state_sequence(matrix.extract(source), tollerance),
+                self.correspondence_relaxed(matrix.delta(matrix.extract(source), tollerance),
                                             predicted_sequence_viterbi)))
         elif sentiment_type == "variation":
-            # if you want to use sentiment variation:
-            # O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_variation_sequence(source_emission, tollerance_var))
             O = matrix.build_emission_generic(delta_stock,
                                               [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]],
                                               self.boolean_variation_sequence2(source_emission, tollerance_var),
@@ -196,23 +202,22 @@ class Calculator():
             predicted_sequence_filtering = model.filtering(19, self.boolean_variation_sequence(source_emission,
                                                                                                tollerance_var))
             print("L'accuratezza del filtraggio e' " +
-                  str(self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
+                  str(self.correspondence(matrix.delta(matrix.extract(source), tollerance),
                                           predicted_sequence_filtering)))
             print("L'accuratezza rilassata del filtraggio e' " +
-                  str(self.correspondence_relaxed(matrix.state_sequence(matrix.extract(source), tollerance),
+                  str(self.correspondence_relaxed(matrix.delta(matrix.extract(source), tollerance),
                                                   predicted_sequence_filtering)))
 
             print("\n\nViterbi:")
             predicted_sequence_viterbi = model.viterbi(self.boolean_variation_sequence(source_emission, tollerance_var))
             print("L'accuratezza di viterbi e' " +
-                  str(self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
+                  str(self.correspondence(matrix.delta(matrix.extract(source), tollerance),
                                           predicted_sequence_viterbi)))
             print("L'accuratezza rilassata di viterbi e' " +
-                  str(self.correspondence_relaxed(matrix.state_sequence(matrix.extract(source), tollerance),
+                  str(self.correspondence_relaxed(matrix.delta(matrix.extract(source), tollerance),
                                                   predicted_sequence_viterbi)))
 
         elif sentiment_type == "normalized":
-            # if you want to use normalized variation:
             O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance),
                                         self.boolean_normalized_sequence(source_emission, tollerance_norm))
 
@@ -221,19 +226,18 @@ class Calculator():
             predicted_sequence_filtering = model.filtering(19, self.boolean_normalized_sequence(source_emission,
                                                                                                 tollerance_norm))
             print("L'accuratezza del filtraggio e' " + str(
-                self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
+                self.correspondence(matrix.delta(matrix.extract(source), tollerance),
                                     predicted_sequence_filtering)))
             print("L'accuratezza rilassata del filtraggio e' " + str(
-                self.correspondence_relaxed(matrix.state_sequence(matrix.extract(source), tollerance),
+                self.correspondence_relaxed(matrix.delta(matrix.extract(source), tollerance),
                                             predicted_sequence_filtering)))
             print("\n\nViterbi:")
             predicted_sequence_viterbi = model.viterbi(
                 self.boolean_normalized_sequence(source_emission, tollerance_norm))
             print("L'accuratezza di Viterbi e' " +
-                  str(self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
+                  str(self.correspondence(matrix.delta(matrix.extract(source), tollerance),
                                           predicted_sequence_viterbi)))
             print("L'accuratezza rilassata di Viterbi e' " +
-                  str(self.correspondence_relaxed(matrix.state_sequence(matrix.extract(source), tollerance),
+                  str(self.correspondence_relaxed(matrix.delta(matrix.extract(source), tollerance),
                                                   predicted_sequence_viterbi)))
-
 
