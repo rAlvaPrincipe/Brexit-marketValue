@@ -14,7 +14,7 @@ def retrieveVocabulary(vocabulary_request):
 
         # Create and execute SQL query
         cursor = db.cursor()
-        query = "SELECT word, label FROM " + vocabulary_request + ";"
+        query = "SELECT * FROM " + vocabulary_request + ";"
         try:
             cursor.execute(query)
             print(query)

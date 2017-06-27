@@ -108,7 +108,23 @@ class Calculator():
         print("\n" + str(state))
         print(prediction)
         return str(count_corr / float(state.__len__() - 1))
-        
+
+    def correspondence_relaxed(self, state, prediction):
+        count_corr = 0.0
+        for count in range(1, state.__len__()):
+            if (str(state[count]) == "sale" and (
+                    str(prediction[count - 1]) == "sale" or str(prediction[count - 1]) == "stabile")):
+                count_corr += 1
+            elif (str(state[count]) == "scende" and (
+                    str(prediction[count - 1]) == "scende" or str(prediction[count - 1]) == "stabile")):
+                count_corr += 1
+            elif (str(state[count]) == "stabile" and (
+                        str(prediction[count - 1]) == "stabile" or str(prediction[count - 1]) == "sale" or str(
+                    prediction[count - 1]) == "scende")):
+                count_corr += 1
+        print("\n" + str(state))
+        print(prediction)
+        return str(count_corr / float(state.__len__() - 1))
 
     def start(self, vocabulary_request, sentiment_type, tollerance, tollerance_var, tollerance_norm):
         days = ['2016/12/05', '2016/12/06', '2016/12/07', '2016/12/08', '2016/12/09',
@@ -120,9 +136,9 @@ class Calculator():
 
         out_file = open("Sentiment.txt", "w")
         for i in range(0, days.__len__()):
-        	days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
-        	out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
-        	print(days_sentiment[i])
+            days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
+            out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
+            print(days_sentiment[i])
         out_file.close()
 
         source = "../../datasets/Market_values.txt"
@@ -153,13 +169,18 @@ class Calculator():
             print("L'accuratezza del filtraggio e' " + str(
                 self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
                                     predicted_sequence_filtering)))
+            print("L'accuratezza rilassata del filtraggio e' " + str(
+                self.correspondence_relaxed(matrix.state_sequence(matrix.extract(source), tollerance),
+                                            predicted_sequence_filtering)))
 
             print("\n\nViterbi:")
             predicted_sequence_viterbi = model.viterbi(self.boolean_standard_sequence(source_emission))
             print("L'accuratezza di Viterbi e' " + str(
                 self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
                                     predicted_sequence_viterbi)))
-
+            print("L'accuratezza rilassata di Viterbi e' " + str(
+                self.correspondence_relaxed(matrix.state_sequence(matrix.extract(source), tollerance),
+                                            predicted_sequence_viterbi)))
         elif sentiment_type == "variation":
             # if you want to use sentiment variation:
             # O = matrix.build_emission_m(matrix.delta(matrix.extract(source), tollerance), self.boolean_variation_sequence(source_emission, tollerance_var))
@@ -177,12 +198,18 @@ class Calculator():
             print("L'accuratezza del filtraggio e' " +
                   str(self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
                                           predicted_sequence_filtering)))
+            print("L'accuratezza rilassata del filtraggio e' " +
+                  str(self.correspondence_relaxed(matrix.state_sequence(matrix.extract(source), tollerance),
+                                                  predicted_sequence_filtering)))
 
             print("\n\nViterbi:")
             predicted_sequence_viterbi = model.viterbi(self.boolean_variation_sequence(source_emission, tollerance_var))
             print("L'accuratezza di viterbi e' " +
                   str(self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
                                           predicted_sequence_viterbi)))
+            print("L'accuratezza rilassata di viterbi e' " +
+                  str(self.correspondence_relaxed(matrix.state_sequence(matrix.extract(source), tollerance),
+                                                  predicted_sequence_viterbi)))
 
         elif sentiment_type == "normalized":
             # if you want to use normalized variation:
@@ -196,10 +223,17 @@ class Calculator():
             print("L'accuratezza del filtraggio e' " + str(
                 self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
                                     predicted_sequence_filtering)))
+            print("L'accuratezza rilassata del filtraggio e' " + str(
+                self.correspondence_relaxed(matrix.state_sequence(matrix.extract(source), tollerance),
+                                            predicted_sequence_filtering)))
             print("\n\nViterbi:")
             predicted_sequence_viterbi = model.viterbi(
                 self.boolean_normalized_sequence(source_emission, tollerance_norm))
             print("L'accuratezza di Viterbi e' " +
                   str(self.correspondence(matrix.state_sequence(matrix.extract(source), tollerance),
                                           predicted_sequence_viterbi)))
+            print("L'accuratezza rilassata di Viterbi e' " +
+                  str(self.correspondence_relaxed(matrix.state_sequence(matrix.extract(source), tollerance),
+                                                  predicted_sequence_viterbi)))
+
 
