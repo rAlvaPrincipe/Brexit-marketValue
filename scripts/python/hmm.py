@@ -80,19 +80,19 @@ class Hmm:
 
     def viterbi(self, observations_seq):
 
-        # il modello e' costituito da 3 vettori che rappresentano le probabilità per ogni stato
+        # il modello e' costituito da 3 vettori che rappresentano le probabilita per ogni stato
         p_sale = []
         p_stabile = []
         p_scende = []
 
         # inizializzo i vettori moltiplicando I per la prima osservazione
-        # ogni stato viene inserito come coppia [stato precedente, probabilità]
+        # ogni stato viene inserito come coppia [stato precedente, probabilita]
         # il primo stato precedente viene assegnato a 0
         p_sale.append([0, float(self.O[0][observations_seq[0]]) * float(self.I[0])])
         p_stabile.append([0, float(self.O[1][observations_seq[0]] * float(self.I[1]))])
         p_scende.append([0, float(self.O[2][observations_seq[0]] * float(self.I[2]))])
 
-        # calcolo in avanti le probabilità
+        # calcolo in avanti le probabilita
         for i in range(1, observations_seq.__len__()):
 
             # calculate for state "sale" (sale = 0) stato_prec*T*O
