@@ -10,10 +10,10 @@ class Calculator():
 
     # builds a sequence of observation with only positive/negative sentiment
     # it uses 0 for pos and 1 for negs 
-    # input: source_emission = "../file_path/.."
+    # input: src_emission = "../file_path/.."
     # output: [1, 0, 0, 0, 0, 1, 0, ...]
-    def boolean_standard_sequence(self, source_emission):
-        sentiment = mt.extract(source_emission)
+    def boolean_standard_sequence(self, src_emission):
+        sentiment = mt.extract(src_emission)
         sequence = []
         for count in range(0, sentiment.__len__()):
             if sentiment[count][1] > 0:
@@ -25,8 +25,8 @@ class Calculator():
 
     # build a sequence of observation based on sentiment variation
     # it uses 0 for sale and 1 for scende
-    def boolean_variation_sequence(self, source_emission, tollerance_var):
-        sentiment = mt.delta_labels(source_emission, tollerance_var, 1) 
+    def boolean_variation_sequence(self, src_emission, tollerance_var):
+        sentiment = mt.delta_labels(src_emission, tollerance_var, 1) 
         sequence = []
         for count in range(0, sentiment.__len__()):
             if float(sentiment[count]) > float(tollerance_var):
@@ -37,8 +37,8 @@ class Calculator():
 
 
     # build a sequence of observation based on normalized sentiment variation
-    def boolean_normalized_sequence(self, source_emission, tollerance_norm):
-        sentiment = mt.extract(source_emission)
+    def boolean_normalized_sequence(self, src_emission, tollerance_norm):
+        sentiment = mt.extract(src_emission)
         sentiment = self.normalize(sentiment)
         sequence = []
         for count in range(0, sentiment.__len__()):
@@ -110,103 +110,72 @@ class Calculator():
         days_sentiment = {}
         vocabulary = sm.retrieveVocabulary(vocabulary_request)
 
-        out_file = open("Sentiment.txt", "w")
-        for i in range(0, days.__len__()):
-            days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
-            out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
-            print(days_sentiment[i])
-        out_file.close()
+#        out_file = open("Sentiment.txt", "w")
+  #      for i in range(0, days.__len__()):
+    #        days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
+      #      out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
+        #    print(days_sentiment[i])
+        #out_file.close()
 
-        source = "../../datasets/Market_values.txt"
-        source_ext = "../../datasets/Market_values_ext.txt"
+        src = "../../datasets/Market_values.txt"
+        src_ext = "../../datasets/Market_values_ext.txt"
 
         # for valzo
-        #source = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values.txt"
-        #source_ext = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values_ext.txt"
+        #src = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values.txt"
+        #src_ext = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values_ext.txt"
 
-        source_emission = "Sentiment.txt"
+        src_emission = "Sentiment.txt"
         predicted_sequence_filtering = []
         predicted_sequence_viterbi = []
 
-        T = mt.build_transition_m(mt.extract(source_ext), tollerance)
+        T = mt.build_transition_m(mt.extract(src_ext), tollerance)
         I = [1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0]
-        delta_stock = mt.delta(mt.extract(source), tollerance)
+        delta_stock = mt.delta(mt.extract(src), tollerance)
 
         if sentiment_type == "standard":
             O = mt.build_emission_generic(delta_stock,
                                               [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]],
-                                              self.boolean_standard_sequence(source_emission),
+                                              self.boolean_standard_sequence(src_emission),
                                               [["sent+", "0"], ["sent-", "1"]]
                                               )
             model = Hmm(T, O, I)
             print("\n\nFiltering:")
-            predicted_sequence_filtering = model.filtering(19, self.boolean_standard_sequence(source_emission))
-            print("L'accuratezza del filtraggio e' " + str(
-                self.correspondence(mt.delta(mt.extract(source), tollerance), predicted_sequence_filtering)))
-            
-            print("L'accuratezza rilassata del filtraggio e' " + str(
-                self.correspondence_relaxed(mt.delta(mt.extract(source), tollerance),
-                                            predicted_sequence_filtering)))
-
+            predicted_sequence_filtering = model.filtering(19, self.boolean_standard_sequence(src_emission))
             print("\n\nViterbi:")
-            predicted_sequence_viterbi = model.viterbi(self.boolean_standard_sequence(source_emission))
-            print("L'accuratezza di Viterbi e' " + str(
-                self.correspondence(mt.delta(mt.extract(source), tollerance),
-                                    predicted_sequence_viterbi)))
-            print("L'accuratezza rilassata di Viterbi e' " + str(
-                self.correspondence_relaxed(mt.delta(mt.extract(source), tollerance),
-                                            predicted_sequence_viterbi)))
+            predicted_sequence_viterbi = model.viterbi(self.boolean_standard_sequence(src_emission))
+        
         elif sentiment_type == "variation":
             O = mt.build_emission_generic(delta_stock,
                                               [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]],
-                                              mt.delta_labels(source_emission, tollerance_var, 2),
+                                              mt.delta_labels(src_emission, tollerance_var, 2),
                                               [["sentSale", "sale"], ["sentStabile", "scende"],
                                                ["sentScende", "scende"]]
                                               )
-            mt.delta(mt.extract(source_emission), 0.0)
+            mt.delta(mt.extract(src_emission), 0.0)
             model = Hmm(T, O, I)
-
             print("\n\nFiltering:")
-            predicted_sequence_filtering = model.filtering(19, self.boolean_variation_sequence(source_emission,
-                                                                                               tollerance_var))
-            print("L'accuratezza del filtraggio e' " +
-                  str(self.correspondence(mt.delta(mt.extract(source), tollerance),
-                                          predicted_sequence_filtering)))
-            print("L'accuratezza rilassata del filtraggio e' " +
-                  str(self.correspondence_relaxed(mt.delta(mt.extract(source), tollerance),
-                                                  predicted_sequence_filtering)))
-
+            predicted_sequence_filtering = model.filtering(19, self.boolean_variation_sequence(src_emission, tollerance_var))
             print("\n\nViterbi:")
-            predicted_sequence_viterbi = model.viterbi(self.boolean_variation_sequence(source_emission, tollerance_var))
-            print("L'accuratezza di viterbi e' " +
-                  str(self.correspondence(mt.delta(mt.extract(source), tollerance),
-                                          predicted_sequence_viterbi)))
-            print("L'accuratezza rilassata di viterbi e' " +
-                  str(self.correspondence_relaxed(mt.delta(mt.extract(source), tollerance),
-                                                  predicted_sequence_viterbi)))
+            predicted_sequence_viterbi = model.viterbi(self.boolean_variation_sequence(src_emission, tollerance_var))
 
         elif sentiment_type == "normalized":
-            O = mt.build_emission_m(mt.delta(mt.extract(source), tollerance),
-                                        self.boolean_normalized_sequence(source_emission, tollerance_norm))
+            O = mt.build_emission_m(delta_stock, self.boolean_normalized_sequence(src_emission, tollerance_norm))
 
             model = Hmm(T, O, I)
             print("\n\nFiltering:")
-            predicted_sequence_filtering = model.filtering(19, self.boolean_normalized_sequence(source_emission,
-                                                                                                tollerance_norm))
-            print("L'accuratezza del filtraggio e' " + str(
-                self.correspondence(mt.delta(mt.extract(source), tollerance),
-                                    predicted_sequence_filtering)))
-            print("L'accuratezza rilassata del filtraggio e' " + str(
-                self.correspondence_relaxed(mt.delta(mt.extract(source), tollerance),
-                                            predicted_sequence_filtering)))
+            predicted_sequence_filtering = model.filtering(19, self.boolean_normalized_sequence(src_emission, tollerance_norm))
             print("\n\nViterbi:")
-            predicted_sequence_viterbi = model.viterbi(
-                self.boolean_normalized_sequence(source_emission, tollerance_norm))
-            print("L'accuratezza di Viterbi e' " +
-                  str(self.correspondence(mt.delta(mt.extract(source), tollerance),
-                                          predicted_sequence_viterbi)))
-            print("L'accuratezza rilassata di Viterbi e' " +
-                  str(self.correspondence_relaxed(mt.delta(mt.extract(source), tollerance),
-                                                  predicted_sequence_viterbi)))
+            predicted_sequence_viterbi = model.viterbi(self.boolean_normalized_sequence(src_emission, tollerance_norm))
 
 
+
+        print("\n\nFiltering accuratezza:")
+        print("L'accuratezza del filtraggio e' " + 
+             str(self.correspondence(delta_stock, predicted_sequence_filtering)))
+        print("L'accuratezza rilassata del filtraggio e' " + str(
+            self.correspondence_relaxed(delta_stock, predicted_sequence_filtering)))
+        print("\n\nViterbi accuratezza:")
+        print("L'accuratezza di Viterbi e' " +
+              str(self.correspondence(delta_stock, predicted_sequence_viterbi)))
+        print("L'accuratezza rilassata di Viterbi e' " +
+              str(self.correspondence_relaxed(delta_stock, predicted_sequence_viterbi)))
