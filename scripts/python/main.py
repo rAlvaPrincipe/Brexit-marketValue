@@ -13,4 +13,4 @@ if __name__ == "__main__":
         # vocabulary = afinn96, afinn111, bing, nrc, afinn_bing_base_bing, afinn_bing_base_afinn
         # sentiment_type = standard, variation, normalized
         # tollerance for 3 type of discretization
-        calculator.start("bing", "standard", 0.001, 0, 0.4)
+        calculator.start("bing", "variation",0.001, 0.2, 3)
