@@ -43,7 +43,7 @@ f.close
 #generate sql file
 for word in words:
     f = open('NRC.sql', 'a')
-    f.write("INSERT INTO nrc VALUES (\'"+str(word).replace("'", "\\'")+"\', \'"+str(words[word])+"\');\n")
+    f.write("INSERT INTO nrc VALUES (\'"+str(word).replace("'", " \\' ")+"\', \'"+str(words[word])+"\');\n")
 
 
 f.close()

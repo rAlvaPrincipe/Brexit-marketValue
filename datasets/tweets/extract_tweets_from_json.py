@@ -1,12 +1,11 @@
 import json
+import time
 
 #extract the text from tweet json file
 def extractText(json_data):
     parsed_json = json.loads(json_data)
     #return tweet text
-    if 'title' in parsed_json:
-        return parsed_json['title']
-    elif 'text' in parsed_json:
+    if 'text' in parsed_json:
         return parsed_json['text']
     else:
         return 0
@@ -55,9 +54,10 @@ def main():
             tweet_text = extractText(line)
             tweet_date = extractDate(line)
 
-            if tweet_text != 0 and tweet_text is not None:
+            if tweet_text != 0 and tweet_text is not None and len(tweet_text) <= 255:
                 tweet_text = _removeNonAscii(tweet_text)
-                tweet_text = str(tweet_text).replace("'", "\\'")
+                tweet_text = str(tweet_text).replace("'", "")
+                tweet_text = str(tweet_text).replace("\\", "")
                 counter += 1
                 query = "INSERT INTO tweets_resolved_brexit VALUES (\'"+str(counter)+"\',\'"+tweet_text+"\',\'"+str(tweet_date)+"\');\n"
                 f.write(query)
@@ -66,4 +66,6 @@ def main():
 
 
 if __name__ == "__main__":
+    start_time = time.time()
     main()
+    print("--- %s seconds ---" % (time.time() - start_time))
