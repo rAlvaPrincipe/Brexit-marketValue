@@ -1,0 +1,75 @@
+{% extends "layout.html" %} {% block title %}Demo{% endblock %} {% block head %} {{ super() }}
+<style type="text/css">
+  .important {
+    color: #336699;
+  }
+</style>
+{% endblock %} {% block content %}
+<h1>{{ name }}</h1>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead class=".important">
+ 
+    </thead>
+    <tbody>
+      <div id="parameters">
+        <form  method="POST", action="{{ url_for('handle_data')}}">
+          <div id="column1" style="width:200px;float:left;">
+            <p>Dictionary</p>
+            <select name="dictionary">
+              <option value="bing"> bing </option>
+              <option id="afinn96" value="afinn96"> afinn96 </option>
+              <option id="afinn111" value="afinn111"> afinn111 </option>
+              <option id="nrc" value="nrc"> nrc </option>
+              <option id="afinn_bing_base_bing" value="afinn_bing_base_bing"> afinn_bing_base_bing </option>
+              <option id="afinn_bing_base_afinn" value="afinn_bing_base_afinn"> afinn_bing_base_afinn </option>
+            </select>
+          </div>
+          <div id="column2" style="width:200px;float:left;">
+            <p>Sentiment discretization</p>
+            <select name="discretization">
+              <option id="2_discretized" value="2"> 2 </option>
+              <option id="3_discretized" value="3"> 3 </option>
+            </select>
+          </div>
+          <div id="column3" style="width:200px;float:left;">
+            <p>Type</p>
+            <select name="typo">
+              <option id="bing" value="standard"> standard </option>
+              <option id="afinn96" value="variation"> variation </option>
+            </select>
+          </div>
+          <div id="column4" style="width:200px;float:left;">
+            <p>transition tollerance</p>
+            <select name="tr-tollerance">
+              <option  value="0.001"> 0.001 </option>
+              <option  value="0.002"> 0.002 </option>
+            </select>
+          </div>
+          <div id="column4" style="width:200px;float:left;">
+            <p>emission tollerance</p>
+            <select name="sm-tollerance">
+              <option  value="0.1"> 0.1 </option>
+              <option value="0.2"> 0.2 </option>
+            </select>
+          </div>
+          <input type="submit" value="Calcola"> 
+           <!-- <a href="{{ url_for('demo', dictionary = request.form['dictionary'], discretization = request.form['discretization'], typo = request.form['typo'],
+         trtollerance = request.form['trtollerance'], smtollerance = request.form['smtollerance'])}}">
+              <button type="button" class="btn btn-default btn-lg">
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> Calcola
+              </button>
+            </a>-->
+        </form>
+      </div>
+      <div id = "results" style="width:600px;float:left;margin-top:50px">
+        {% for o in data %}
+              <p style="float:left;width: 600px" >{{ o }}</p>
+        {% endfor %}
+      </div>
+    </tbody>
+  </table>
+
+
+</div>
+{% endblock %}

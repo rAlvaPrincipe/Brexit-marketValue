@@ -37,7 +37,7 @@
           <li class="submenu">Menu</li>
           <li><a href="{{ url_for('index') }}">Home</a></li>
           <li><a href="#">Problema</a></li>
-          <li><a href="#">Demo</a></li>
+          <li><a href="{{ url_for('demo')}}">Demo</a></li>
           <li class="submenu">Datasets</li>
           <li><a href="#">Tweets</a></li>
           <li><a href="{{ url_for('dictionary', name='afinn111', offset=0, limit=10) }}">AFINN-111</a></li>

@@ -137,12 +137,12 @@ class Calculator():
         days_sentiment = {}
         vocabulary = sm.retrieveVocabulary(vocabulary_request)
 
-        # out_file = open("Sentiment.txt", "w")
-        # for i in range(0, days.__len__()):
+        #out_file = open("Sentiment.txt", "w")
+        #for i in range(0, days.__len__()):
         #    days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
         #    out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
         #    print(days_sentiment[i])
-        # out_file.close()
+        #out_file.close()
 
         # for unix users
         #src = "../../datasets/Market_values.txt"
@@ -230,3 +230,11 @@ class Calculator():
               str(self.correspondence(delta_stock, predicted_sequence_viterbi)))
         print("L'accuratezza rilassata di Viterbi e' " +
               str(self.correspondence_relaxed(delta_stock, predicted_sequence_viterbi)))
+
+        result=[]
+        result.append("\nL'accuratezza del filtraggio e' " +str(self.correspondence(delta_stock, predicted_sequence_filtering)))
+        result.append("\nL'accuratezza rilassata del filtraggio e' "+ str(self.correspondence_relaxed(delta_stock, predicted_sequence_filtering)))
+        result.append("\nL'accuratezza di Viterbi e' " +  str(self.correspondence(delta_stock, predicted_sequence_viterbi)))
+        result.append("\nL'accuratezza rilassata di Viterbi e' " + str(self.correspondence_relaxed(delta_stock, predicted_sequence_viterbi)))
+
+        return result

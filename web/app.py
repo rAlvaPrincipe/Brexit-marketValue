@@ -1,12 +1,15 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_mysqldb import MySQL
 import subprocess
+import sys
+sys.path.insert(0, 'D:\Dropbox\Git_Projects\Brexit-marketValue\scripts\python')
+from calculator import Calculator 
 
 app = Flask(__name__)
 mysql = MySQL(app)
 
 #set up mysql options
-app.config['MYSQL_HOST'] = 'db' # <-- db if docker
+app.config['MYSQL_HOST'] = '127.0.0.1' # <-- db if docker
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'experiments'
@@ -16,6 +19,17 @@ app.config['MYSQL_DB'] = 'experiments'
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/demo', methods=['GET','POST'])
+def demo():
+	return render_template('demo.html')
+
+@app.route('/handle_data', methods=['GET','POST'])
+def handle_data():
+	calc = Calculator()
+	result = calc.start(str(request.form.get('dictionary')), str(request.form.get('typo')), float(request.form.get('tr-tollerance')), float(request.form.get('sm-tollerance')), int(request.form.get('discretization')))
+
+	return render_template('demo.html', data=result)
 
 @app.route('/dictionary')
 @app.route('/dictionary/<name>/<offset>/<limit>')
