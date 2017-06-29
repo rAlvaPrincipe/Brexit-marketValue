@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+
+<head>
+  <!-- General JQuery-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+  <!-- Data Provider-->
+  <script type="text/javascript" src="//s3-us-west-2.amazonaws.com/s.cdpn.io/152047/data.js"></script>
+
+  <!-- GoldenLayout -->
+  <script type="text/javascript" src="https://golden-layout.com/files/latest/js/goldenlayout.min.js"></script>
+  <link type="text/css" rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-base.css" />
+  <link type="text/css" rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-dark-theme.css" />
+
+
+  <title>Brexit-marketValue</title>
+  <style type="text/css">
+    h2 {
+      font: 14px Arial, sans-serif;
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+</body>
+<script>
+var config = {
+    content: [{
+        type: 'row',
+        content:[{
+        type: 'column',
+        content:[{
+            type: 'component',
+            componentName: 'testComponent',
+            componentState: { label: 'A' }
+        },{
+          type: 'component',
+            componentName: 'testComponent',
+            componentState: { label: 'B' }
+        },{
+          type: 'component',
+            componentName: 'testComponent',
+            componentState: { label: 'C' }
+        },
+        ]},{
+          type: 'component',
+            componentName: 'testComponent',
+            componentState: { label: 'D' }
+        },{
+        type: 'column',
+        content:[{
+            type: 'component',
+            componentName: 'testComponent',
+            componentState: { label: 'E' }
+        },{
+          type: 'component',
+            componentName: 'testComponent',
+            componentState: { label: 'F' }
+        },{
+          type: 'component',
+            componentName: 'testComponent',
+            componentState: { label: 'G' }
+        },
+        ]},
+        ]}
+]};
+
+var myLayout = new GoldenLayout( config );
+
+myLayout.registerComponent( 'testComponent', function( container, componentState ){
+    container.getElement().html( '<h2>' + componentState.label + '</h2>' );
+});
+
+myLayout.init();
+</script>
+
+</html>

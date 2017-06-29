@@ -1,3 +1,4 @@
 .DS_Store
 *.pyc
 resolved_brexit.json
+tweets_resolved_brexit.sql

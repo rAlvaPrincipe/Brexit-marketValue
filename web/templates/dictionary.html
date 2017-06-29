@@ -1,0 +1,38 @@
+{% extends "layout.html" %} {% block title %}Dictionary{% endblock %} {% block head %} {{ super() }}
+<style type="text/css">
+  .important {
+    color: #336699;
+  }
+</style>
+{% endblock %} {% block content %}
+<h1>{{ name }}</h1>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead class=".important">
+      <tr>
+        <th>Word</th>
+        <th>Label</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for k,v in data.items() %}
+      <tr>
+        <td>{{ k}}</td>
+        <td>{{ v }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% set offset = offset | int %} {% if offset > 0 %}
+  <a href="{{ url_for('dictionary', name=name, offset=offset-10, limit=limit) }}"><button type="button" class="btn btn-default btn-lg">
+  <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Precedenti 10
+</button>
+{% endif %}
+
+</a>
+  <a href="{{ url_for('dictionary', name=name, offset=offset+10, limit=limit) }}"><button type="button" class="btn btn-default btn-lg">
+  <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> Prossimi 10
+</button>
+</a>
+</div>
+{% endblock %}
