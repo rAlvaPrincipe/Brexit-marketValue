@@ -129,7 +129,10 @@ class Calculator():
         print(prediction)
         return str(count_corr / float(state.__len__() - 1))
 
-    def start(self, vocabulary_request, sentiment_type, market_tollerance, sentiment_tollerance, sentiment_discretization):
+    def compute_sentiment(self, vocabulary_request):
+
+        ##Compute sentiment standard
+
         days = ['2016/12/05', '2016/12/06', '2016/12/07', '2016/12/08', '2016/12/09',
                 '2016/12/12', '2016/12/13', '2016/12/14', '2016/12/15', '2016/12/16',
                 '2016/12/19', '2016/12/20', '2016/12/21', '2016/12/22', '2016/12/23',
@@ -137,12 +140,38 @@ class Calculator():
         days_sentiment = {}
         vocabulary = sm.retrieveVocabulary(vocabulary_request)
 
-        #out_file = open("Sentiment.txt", "w")
-        #for i in range(0, days.__len__()):
-        #    days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
-        #    out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
-        #    print(days_sentiment[i])
-        #out_file.close()
+        out_file = open(vocabulary_request + "_sentiment.txt", "w")
+        for i in range(0, days.__len__()):
+            days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
+            out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
+            print(days_sentiment[i])
+        out_file.close()
+
+        ##Compute sentiment extended
+
+        days_ext = [
+            '2016/11/28', '2016/11/29', '2016/11/30', '2016/12/01', '2016/12/02',
+            '2016/12/05', '2016/12/06', '2016/12/07', '2016/12/08', '2016/12/09',
+            '2016/12/12', '2016/12/13', '2016/12/14', '2016/12/15', '2016/12/16',
+            '2016/12/19', '2016/12/20', '2016/12/21', '2016/12/22', '2016/12/23',
+            '2016/12/27', '2016/12/28', '2016/12/29', '2016/12/30',
+            '2017/01/02', '2017/01/03', '2017/01/04', '2017/01/05', '2017/01/06',]
+
+        days_sentiment = {}
+        vocabulary = sm.retrieveVocabulary(vocabulary_request)
+
+        out_file = open(vocabulary_request + "_sentiment_ext.txt", "w")
+        for i in range(0, days.__len__()):
+            days_sentiment[i] = sm.day_sentiment(days_ext[i], vocabulary)
+            out_file.write(days_ext[i] + "   " + str(days_sentiment[i]) + "\n")
+            print(days_sentiment[i])
+        out_file.close()
+
+    def start(self, vocabulary_request, sentiment_type, market_tollerance, sentiment_tollerance, sentiment_discretization):
+        days = ['2016/12/05', '2016/12/06', '2016/12/07', '2016/12/08', '2016/12/09',
+                '2016/12/12', '2016/12/13', '2016/12/14', '2016/12/15', '2016/12/16',
+                '2016/12/19', '2016/12/20', '2016/12/21', '2016/12/22', '2016/12/23',
+                '2016/12/27', '2016/12/28', '2016/12/29', '2016/12/30']
 
         # for unix users
         #src = "../../datasets/Market_values.txt"
@@ -152,7 +181,9 @@ class Calculator():
         src = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values.txt"
         src_ext = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values_ext.txt"
 
-        src_emission = "Sentiment.txt"
+        #file .._ext.txt for extended days
+        #file .txt for originary days
+        src_emission = vocabulary_request + "_sentiment_ext.txt"
         filtering = []
         predicted_sequence_filtering = []
         predicted_sequence_viterbi = []

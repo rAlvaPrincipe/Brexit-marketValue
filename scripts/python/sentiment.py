@@ -48,7 +48,7 @@ def day_sentiment(day,vocab):
 
     # Create and execute SQL query
     cursor = db.cursor()
-    query = "SELECT tweet FROM tweets WHERE tweet_date = \'" + day + "\';"
+    query = "SELECT tweet FROM tweets_resolved_brexit WHERE tweet_date = \'" + day + "\';"
     try:
         cursor.execute(query)
         print(query)
