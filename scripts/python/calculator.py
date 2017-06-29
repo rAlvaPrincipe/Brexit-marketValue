@@ -9,7 +9,7 @@ from hmm import Hmm
 class Calculator():
 
     # builds a sequence of observation with only positive/negative sentiment
-    # it uses 0 for pos and 1 for negs 
+    # it uses 0 for pos and 1 for negs
     # input:
     # src_emission = "../file_path/.."
     # sentiment_discretization: 2 or 3 classes
@@ -120,7 +120,7 @@ class Calculator():
                         str(prediction[count - 1]) == "stabile" or str(prediction[count - 1]) == "sale" or str(
                     prediction[count - 1]) == "scende")):
                 count_corr += 1
-        
+
         print "[",
         for i in range(0, state.__len__()):
             print( str(state[i][2]) +" "),
@@ -137,13 +137,14 @@ class Calculator():
         days_sentiment = {}
         vocabulary = sm.retrieveVocabulary(vocabulary_request)
 
-#        out_file = open("Sentiment.txt", "w")
-  #      for i in range(0, days.__len__()):
-    #        days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
-      #      out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
+        # out_file = open("Sentiment.txt", "w")
+        # for i in range(0, days.__len__()):
+        #    days_sentiment[i] = sm.day_sentiment(days[i], vocabulary)
+        #    out_file.write(days[i] + "   " + str(days_sentiment[i]) + "\n")
         #    print(days_sentiment[i])
-        #out_file.close()
+        # out_file.close()
 
+        # for unix users
         #src = "../../datasets/Market_values.txt"
         #src_ext = "../../datasets/Market_values_ext.txt"
 
@@ -152,6 +153,7 @@ class Calculator():
         src_ext = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values_ext.txt"
 
         src_emission = "Sentiment.txt"
+        filtering = []
         predicted_sequence_filtering = []
         predicted_sequence_viterbi = []
 
@@ -177,10 +179,11 @@ class Calculator():
 
             model = Hmm(T, O, I)
             print("\n\nFiltering:")
-            predicted_sequence_filtering = model.filtering(19, self.standard_sequence(src_emission, sentiment_discretization, sentiment_tollerance))
+            filtering = model.filtering(19, self.standard_sequence(src_emission, sentiment_discretization, sentiment_tollerance))
+            predicted_sequence_filtering = model.get_steps()
             print("\n\nViterbi:")
             predicted_sequence_viterbi = model.viterbi(self.standard_sequence(src_emission, sentiment_discretization, sentiment_tollerance))
-        
+
         elif sentiment_type == "variation":
 
             if sentiment_discretization == 2:
@@ -200,7 +203,8 @@ class Calculator():
             mt.delta(mt.extract(src_emission), 0.0)
             model = Hmm(T, O, I)
             print("\n\nFiltering:")
-            predicted_sequence_filtering = model.filtering(19, self.variation_sequence(src_emission, sentiment_discretization, sentiment_tollerance))
+            filtering = model.filtering(19, self.variation_sequence(src_emission, sentiment_discretization, sentiment_tollerance))
+            predicted_sequence_filtering = model.get_steps()
             print("\n\nViterbi:")
             predicted_sequence_viterbi = model.viterbi(self.variation_sequence(src_emission, sentiment_discretization, sentiment_tollerance))
 
@@ -209,14 +213,15 @@ class Calculator():
 #
 #            model = Hmm(T, O, I)
 #            print("\n\nFiltering:")
-#            predicted_sequence_filtering = model.filtering(19, self.boolean_normalized_sequence(src_emission, tollerance_norm))
+#            filtering = model.filtering(19, self.boolean_normalized_sequence(src_emission, tollerance_norm))
+#            predicted_sequence_filtering = model.get_steps()
 #            print("\n\nViterbi:")
 #            predicted_sequence_viterbi = model.viterbi(self.boolean_normalized_sequence(src_emission, tollerance_norm))
 
 
 
         print("\n\nFiltering accuratezza:")
-        print("L'accuratezza del filtraggio e' " + 
+        print("L'accuratezza del filtraggio e' " +
              str(self.correspondence(delta_stock, predicted_sequence_filtering)))
         print("L'accuratezza rilassata del filtraggio e' " + str(
             self.correspondence_relaxed(delta_stock, predicted_sequence_filtering)))

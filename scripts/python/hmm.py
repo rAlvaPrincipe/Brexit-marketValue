@@ -7,6 +7,7 @@ class Hmm:
     T=[] # Transition table
     O=[] # Observation table
     I=[] # Initial probability
+    Steps=[] #labelled steps [[<x,y>,sale], [<z,k>,scende]]
 
     # __init__ constructor
     def __init__(self, T, O, I):
@@ -17,24 +18,31 @@ class Hmm:
     # filtering describe the filtering task, return the probability distribution
     def filtering(self, steps, observations):
         out = self.I
-        results=[]
         for i in range(0,steps):
             print("\nstep: "+str(i))
             out = self.matrix_multiply(out, self.T) #prediction step
             #wich state is predicted?
+            step = []
             if(max(out) == out[0]):
-                results.append("sale")
+                step.append(out)
+                step.append("sale")
+                self.Steps.append(step)
             elif (max(out) == out[1]):
-                results.append("stabile")
+                step.append(out)
+                step.append("stabile")
+                self.Steps.append(step)
             elif (max(out) == out[2]):
-                results.append("scende")
+                step.append(out)
+                step.append("scende")
+                self.Steps.append(step)
+
             print("_prediction: "+str(out))
             out = self.matrix_multiply(out, self.diagonal(observations[i])) #update step
             print("__update: "+str(out))
             out = self.normalize(out) #normalization
-
             print("___normalized: "+str(out))
-        return results
+
+        return out
 
     # prediction describe the prediction task, with filtering until observed
     def prediction(self, steps, observations):
@@ -74,6 +82,14 @@ class Hmm:
     # describe print the internal variables of the Hidden Markov Model
     def describe(self):
         print "Transition table : ", self.T,  ", Obs: ", self.O,", prob: ", self.I
+
+    # get_steps return the steps of filtering
+    def get_steps(self):
+        steps_list = []
+        for step in self.Steps:
+            steps_list.append(step[1])
+
+        return steps_list
 
     ####VITERBI
 
@@ -181,20 +197,22 @@ class Hmm:
 
 ## how to use: example code
 
-#transition_table = [[0.25, 0.25, 0.50],
-#                   [0.40, 0.20, 0.40],
+# transition_table = [[0.25, 0.25, 0.50],
+#                    [0.40, 0.20, 0.40],
 #                    [0.11, 0.33, 0.56]]
-
-#observation_table = [[0.00, 1.00],
-#                     [0.40, 0.60],
-#                     [0.56, 0.44]]
-
-#initial_probability = [0.33, 0.33, 0.33]
-
-#hmm = Hmm(transition_table, observation_table, initial_probability)
-
+#
+# observation_table = [[0.00, 1.00],
+#                      [0.40, 0.60],
+#                      [0.56, 0.44]]
+#
+# initial_probability = [0.33, 0.33, 0.33]
+#
+# hmm = Hmm(transition_table, observation_table, initial_probability)
+#
 #print("Filtering:")
 #print(hmm.filtering(15, [1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1]))
+
+#print(hmm.get_steps())
 
 #print("\nPrediction:")
 #print(hmm.prediction(5, [0,1,1]))
