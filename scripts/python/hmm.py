@@ -7,8 +7,9 @@ class Hmm:
     T=[] # Transition table
     O=[] # Observation table
     I=[] # Initial probability
-    Steps=[] #labelled steps [[<x,y>,sale], [<z,k>,scende]]
-
+    Steps=[] #labelled steps [ #step1 [ #previsione[p1,p2,p3, sale], #aggiornamento[p1,p2,p3], #normalizzazione [p1,p2,p3]], #step2...]
+    Steps_complete = [] #labelled steps [#sale[best_precedent, p], #stabilee[best_precedent, p],.....]
+    Viterbi_Steps=[] #labelled steps [#sale[best_precedent, p], #stabilee[best_precedent, p],.....]
     # __init__ constructor
     def __init__(self, T, O, I):
         self.T = T
@@ -17,31 +18,42 @@ class Hmm:
 
     # filtering describe the filtering task, return the probability distribution
     def filtering(self, steps, observations):
+        result=[]
         out = self.I
         for i in range(0,steps):
             print("\nstep: "+str(i))
             out = self.matrix_multiply(out, self.T) #prediction step
             #wich state is predicted?
             step = []
+            step_complete =[]
             if(max(out) == out[0]):
                 step.append(out)
                 step.append("sale")
-                self.Steps.append(step)
+                step_complete.append(out)
+                step_complete.append("sale")
             elif (max(out) == out[1]):
                 step.append(out)
                 step.append("stabile")
-                self.Steps.append(step)
+                step_complete.append(out)
+                step_complete.append("stabile")
             elif (max(out) == out[2]):
                 step.append(out)
                 step.append("scende")
-                self.Steps.append(step)
+                step_complete.append(out)
+                step_complete.append("scende")
 
             print("_prediction: "+str(out))
+
             out = self.matrix_multiply(out, self.diagonal(observations[i])) #update step
+            step_complete.append(out)
             print("__update: "+str(out))
+
             out = self.normalize(out) #normalization
+            step_complete.append(out)
             print("___normalized: "+str(out))
 
+            self.Steps.append(step)
+            self.Steps_complete.append(step_complete)
         return out
 
     # prediction describe the prediction task, with filtering until observed
@@ -91,6 +103,12 @@ class Hmm:
 
         return steps_list
 
+    def get_steps_complete(self):
+        steps_list = []
+        for step in self.Steps_complete:
+            steps_list.append(step)
+
+        return steps_list
     ####VITERBI
 
 
@@ -157,6 +175,11 @@ class Hmm:
         print("\nsale :" + str(p_sale) +
               "\nstabile :" + str(p_stabile) +
               "\nscende :" + str(p_scende))
+        viterbi_step=[]
+        viterbi_step.append(p_sale)
+        viterbi_step.append(p_stabile)
+        viterbi_step.append(p_scende)
+        self.Viterbi_Steps.append(viterbi_step)
 
         best_sequence = []
         j = 0
@@ -195,6 +218,9 @@ class Hmm:
         # ritorno la sequenza invertita
         return (best_sequence[::-1])
 
+    def get_viterbi_steps(self):
+
+        return self.Viterbi_Steps
 ## how to use: example code
 
 # transition_table = [[0.25, 0.25, 0.50],

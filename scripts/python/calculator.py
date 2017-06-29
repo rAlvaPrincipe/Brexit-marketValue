@@ -263,8 +263,18 @@ class Calculator():
               str(self.correspondence_relaxed(delta_stock, predicted_sequence_viterbi)))
 
         result=[]
+        #matrici
+        result.append(I)
+        result.append(T)
+        result.append(O)
+        #filtraggio
+        result.append(model.get_steps_complete())
+        result.append(model.get_steps())
         result.append("\nL'accuratezza del filtraggio e' " +str(self.correspondence(delta_stock, predicted_sequence_filtering)))
         result.append("\nL'accuratezza rilassata del filtraggio e' "+ str(self.correspondence_relaxed(delta_stock, predicted_sequence_filtering)))
+        #viterbi
+        result.append(model.get_viterbi_steps())
+        result.append(predicted_sequence_viterbi)
         result.append("\nL'accuratezza di Viterbi e' " +  str(self.correspondence(delta_stock, predicted_sequence_viterbi)))
         result.append("\nL'accuratezza rilassata di Viterbi e' " + str(self.correspondence_relaxed(delta_stock, predicted_sequence_viterbi)))
 
