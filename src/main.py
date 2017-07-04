@@ -7,7 +7,7 @@ def main():
 	market_f  = "/home/renzo/rAlvaPrincipe/refactoring/Brexit-marketValue/data/datasets/market/Market_values.txt"
 	calc = Calculator(market_f, sent.output_f)
 	calc.build_transition_m(0.001)
-	calc.emission_selector("variazione", 0.001, 0.1)
+	calc.emission_selector("standard", 0.001, 0.1)
 
 
 

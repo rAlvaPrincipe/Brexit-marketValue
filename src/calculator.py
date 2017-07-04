@@ -31,34 +31,40 @@ class Calculator:
 
 
 
-	## returns a nX3 matrix which associate to each day the variation and a label for the variation
+	## returns a nX5 matrix which associate to each day the variation and a label for the variation
 	## delta(day_t) = day_t - day_t-1
 	## input: values = [["Dec 05, 2016", 1.1971], ["Dec 06, 2016", 1.1832], ...]
-	##		tollerance = 0.001, used to decide if a variation is to be considered "stable"
-	## output: [["Dec 05, 2016", 0, "nullo"], ["Dec 06, 2016", -0.0139, "scende"]..]
+	##		  tollerance = 0.001, used to decide if a variation is to be considered "stable"
+	## output: [["Dec 05, 2016", 0, "nullo", 0,00023, "pos"], ["Dec 06, 2016", -0.0139, "scende", 0,00021, "pos"]..]
 	## notice that delta(day_1) is setted to the default variation and label: 0 , "nullo"
 	def delta(self, file, tollerance):
 		values = self.read(file)
 		deltas = []
 		for count in range(0, values.__len__()):
-			column = []
-			column.append(values[count][0])
+			row = []
+			row.append(values[count][0])
 
 			if count == 0:
-				column.append(0)
-				column.append("nullo")
+				row.append(0)
+				row.append("nullo")
 			else:
-				column.append(values[count][1] - values[count - 1][1])
+				row.append(values[count][1] - values[count - 1][1])
 				if abs(values[count][1] - values[count - 1][1]) <= tollerance:
-					column.append("stabile")
+					row.append("stabile")
 				elif values[count][1] > values[count - 1][1]:
-					column.append("sale")
+					row.append("sale")
 				else:
-					column.append("scende")
-			deltas.append(column)
+					row.append("scende")
+
+			row.append(values[count][1])
+			if values[count][1] >= 0:
+				row.append("pos")
+			elif values[count][1] < 0:
+				row.append("neg")
+
+			deltas.append(row)
 
 		return deltas
-
 
 
 	## Returns only the column of interest of an input matrix
@@ -217,12 +223,20 @@ class Calculator:
 
 
 	def emission_selector(self, mod, market_tollerance, sentiment_tollerance):
-		if mod == "variazione":
+		if mod == "standard":
+			hiddenVars = self.column_selector(self.delta(self.market_f, market_tollerance), 2)
+			observations = self.column_selector( self.delta( self.sentiment_f, sentiment_tollerance), 4)
+			hiddenVars_labels = [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]]
+			observations_labels = [["sent+", "pos"], ["sent-", "neg"]]
+		elif mod == "variazione":
 			hiddenVars = self.column_selector(self.delta(self.market_f, market_tollerance), 2)
 			observations = self.column_selector( self.delta( self.sentiment_f, sentiment_tollerance), 2)
 			hiddenVars_labels = [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]]
 			observations_labels = [["sentSale", "sale"], ["sentStabile", "stabile"], ["sentScende", "scende"]]
-			self.build_emission_generic(hiddenVars, observations, hiddenVars_labels, observations_labels)
+
+		self.build_emission_generic(hiddenVars, observations, hiddenVars_labels, observations_labels)
+
+		
 
 
 #src_emission = "/home/renzo/rAlvaPrincipe/Brexit-marketValue/scripts/python/Sentiment.txt"
