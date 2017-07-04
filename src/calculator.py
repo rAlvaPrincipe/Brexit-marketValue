@@ -168,10 +168,7 @@ class Calculator:
 	##		observations =  [0, 1, 1, 0, ...]
 	##		observations_labels = [["sent+", "0"], ["sent-", "1"]]
 	## output: [[0.0, 1.0], [0.0, 1.0], [0.222, 0.778]]
-	def build_emission_generic(self, hiddenVars_labels, observations_labels, market_tollerance, sentiment_tollerance):
-		hiddenVars = self.column_selector(self.delta(self.market_f, market_tollerance), 2)
-		observations = self.column_selector( self.delta( self.sentiment_f, sentiment_tollerance), 2)
-
+	def build_emission_generic(self, hiddenVars, observations, hiddenVars_labels, observations_labels):
 		# inizialization
 		freqs = []
 		for i in range(0, hiddenVars_labels.__len__()):
@@ -219,6 +216,13 @@ class Calculator:
 
 
 
+	def emission_selector(self, mod, market_tollerance, sentiment_tollerance):
+		if mod == "variazione":
+			hiddenVars = self.column_selector(self.delta(self.market_f, market_tollerance), 2)
+			observations = self.column_selector( self.delta( self.sentiment_f, sentiment_tollerance), 2)
+			hiddenVars_labels = [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]]
+			observations_labels = [["sentSale", "sale"], ["sentStabile", "stabile"], ["sentScende", "scende"]]
+			self.build_emission_generic(hiddenVars, observations, hiddenVars_labels, observations_labels)
 
 
 #src_emission = "/home/renzo/rAlvaPrincipe/Brexit-marketValue/scripts/python/Sentiment.txt"
