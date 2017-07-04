@@ -33,7 +33,7 @@ class Sentiment:
 		vocabulary2={}
 		db = MySQLdb.connect(host="127.0.0.1",
 							 user="root",
-							 passwd="password",
+							 passwd="root",
 							 db="experiments")
 
 		# Create and execute SQL query
@@ -68,7 +68,7 @@ class Sentiment:
 
 		db = MySQLdb.connect(host="127.0.0.1",
 							user="root",
-							passwd="password",
+							passwd="root",
 							db="experiments")
 
 		# Create and execute SQL query
@@ -117,10 +117,9 @@ class Sentiment:
 		out_file = open(self.output_f, "w")
 		for i in range(0, self.days.__len__()):
 			days_sentiment[i] = self.day_sentiment(self.days[i])
-			out_file.write(self.days[i] + "	" + str(days_sentiment[i]) + "\n")
+			out_file.write(self.days[i] + "\t" + str(days_sentiment[i]) + "\n")
 			print(days_sentiment[i])
 		out_file.close()
-
 
 
 #sent  = Sentiment("afinn111", "tweets", 5)
