@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request
 from flask_mysqldb import MySQL
-import subprocess
-import sys
-sys.path.insert(0, '/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/src')
+import sys, os, subprocess
+# same as cd /web/ --> cd ../ --> cd src
+lib_path = os.path.abspath(os.path.join('..', 'src'))
+sys.path.append(lib_path)
 from calculator import Calculator
 
 app = Flask(__name__)
