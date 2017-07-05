@@ -37,7 +37,7 @@ def main():
         PRIMARY KEY (id),
         INDEX tweet_date (tweet_date)
     );
-
+    INSERT INTO tweets_resolved_brexit VALUES ('0','tweet','1970-01-01')
     """
     f.write(table_creation)
     f.close
@@ -59,10 +59,12 @@ def main():
                 tweet_text = str(tweet_text).replace("'", "")
                 tweet_text = str(tweet_text).replace("\\", "")
                 counter += 1
-                query = "INSERT INTO tweets_resolved_brexit VALUES (\'"+str(counter)+"\',\'"+tweet_text+"\',\'"+str(tweet_date)+"\');\n"
+                query = ",(\'"+str(counter)+"\',\'"+tweet_text+"\',\'"+str(tweet_date)+"\')\n"
                 f.write(query)
 
     f.close
+
+
 
 
 if __name__ == "__main__":
