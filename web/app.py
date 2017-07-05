@@ -2,8 +2,8 @@ from flask import Flask, render_template, request
 from flask_mysqldb import MySQL
 import subprocess
 import sys
-sys.path.insert(0, 'D:\Dropbox\Git_Projects\Brexit-marketValue\scripts\python')
-from calculator import Calculator 
+sys.path.insert(0, '/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/src')
+from calculator import Calculator
 
 app = Flask(__name__)
 mysql = MySQL(app)
@@ -31,6 +31,26 @@ def handle_data():
 
 	return render_template('demo.html', data=result)
 
+#tweets
+@app.route('/tweets')
+@app.route('/tweets/<name>/<offset>/<limit>')
+def tweets(offset=0,limit=10,name="tweets"):
+    if int(offset) < 0:
+        offset = 0
+    if int(limit) < 0:
+        limit=10
+
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT id_tweet, tweet, tweet_date  FROM "+name+" LIMIT "+str(offset)+", "+str(limit))
+    result = cur.fetchall()
+    data = {}
+    for row in result:
+        data[str(row[0])] = (row[1],row[2])
+
+    return render_template('tweets.html',data=data, name=name, offset=offset, limit=limit)
+
+
+# dictionaries
 @app.route('/dictionary')
 @app.route('/dictionary/<name>/<offset>/<limit>')
 def dictionary(offset=0,limit=10,name="bing"):
