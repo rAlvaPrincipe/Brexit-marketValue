@@ -5,6 +5,7 @@ import sys, os, subprocess
 lib_path = os.path.abspath(os.path.join('..', 'src'))
 sys.path.append(lib_path)
 from calculator import Calculator
+from sentiment import Sentiment
 
 app = Flask(__name__)
 mysql = MySQL(app)
@@ -24,13 +25,23 @@ def index():
 @app.route('/demo', methods=['GET','POST'])
 def demo():
 	return render_template('demo.html')
-
 @app.route('/handle_data', methods=['GET','POST'])
 def handle_data():
 	calc = Calculator()
 	result = calc.start(str(request.form.get('dictionary')), str(request.form.get('typo')), float(request.form.get('tr-tollerance')), float(request.form.get('sm-tollerance')), int(request.form.get('discretization')))
 
 	return render_template('demo.html', data=result)
+
+#sentiment
+@app.route('/sentiment', methods=['POST', 'GET'])
+def sentiment():
+    if request.method == 'POST':
+        tweet = str(request.form['tweet'])
+        dictionary = str(request.form['dictionary'])
+        sentiment = "<here calculate sentiment!>"
+        return render_template('sentiment.html', tweet=tweet, dictionary=dictionary, sentiment=sentiment)
+    else:
+        return render_template('sentiment.html')
 
 #tweets
 @app.route('/tweets')
@@ -69,10 +80,10 @@ def dictionary(offset=0,limit=10,name="bing"):
 
     return render_template('dictionary.html',data=data, name=name, offset=offset, limit=limit)
 
-# @app.route('/main')
-# def main():
-#     a = "subprocess?"
-#     return str(a)
+# 404 error handler
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')

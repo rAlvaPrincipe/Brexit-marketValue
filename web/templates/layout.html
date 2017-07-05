@@ -38,6 +38,7 @@
           <li><a href="{{ url_for('index') }}">Home</a></li>
           <li><a href="#">Problema</a></li>
           <li><a href="{{ url_for('demo')}}">Demo</a></li>
+          <li><a href="{{ url_for('sentiment')}}">Demo sentiment</a></li>
           <li class="submenu">Datasets</li>
           <li><a href="{{ url_for('tweets', name='tweets', offset=0, limit=10) }}">Tweets originali</a></li>
           <li><a href="{{ url_for('dictionary', name='afinn96', offset=0, limit=10) }}">AFINN-96</a></li>
@@ -45,7 +46,7 @@
           <li><a href="{{ url_for('dictionary', name='bing', offset=0, limit=10) }}">BING</a></li>
           <li><a href="{{ url_for('dictionary', name='afinn111_bing_base_bing', offset=0, limit=10) }}">AFINN-111 base BING</a></li>
           <li><a href="{{ url_for('dictionary', name='afinn111_bing_base_afinn', offset=0, limit=10) }}">AFINN-111 base AFINN</a></li>
-          <li><a href="{{ url_for('dictionary', name='nrc', offset=0, limit=10) }}">CNR</a></li>
+          <li><a href="{{ url_for('dictionary', name='nrc', offset=0, limit=10) }}">NRC</a></li>
           {% endblock %}
         </ul>
 

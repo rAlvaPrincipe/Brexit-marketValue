@@ -1,0 +1,35 @@
+{% extends "layout.html" %} {% block title %}Sentiment{% endblock %} {% block head %} {{ super() }}
+<style type="text/css">
+  .important {
+    color: #336699;
+  }
+</style>
+{% endblock %} {% block content %}
+<h1>{{ name }}</h1>
+
+
+<form action="{{ url_for('sentiment') }}" method="post">
+  <div class="form-group">
+    <label for="tweet_text">Tweet Text</label>
+    <input type="text" class="form-control" name="tweet" placeholder="I hate hate hate, three times!, the #brexit">
+  </div>
+  <div class="form-group">
+    <label for="dictionary">Dictionary</label>
+    <select class="form-control" name="dictionary">
+      <option value="afinn96">AFINN-96</option>
+      <option value="afinn111">AFINN-111</option>
+      <option value="bing">BING</option>
+      <option value="afinn_bing_base_bing">AFINN-111 base BING</option>
+      <option value="afinn_bing_base_afinn">AFINN-111 base AFINN</option>
+      <option value="nrc">NRC</option>
+    </select> </div>
+
+  <button type="submit" class="btn btn-default">Submit</button>
+
+</form>
+
+{% if sentiment %}
+<h1>Sentiment {{ sentiment }}!</h1> {% endif %}
+
+</div>
+{% endblock %}
