@@ -6,17 +6,11 @@
 </style>
 {% endblock %} {% block content %}
 <h1>{{ name }}</h1>
-<div class="table-responsive">
-  <table class="table table-striped">
-    <thead class=".important">
- 
-    </thead>
-    <tbody>
-      <div id="parameters">
-        <form  method="POST", action="{{ url_for('handle_data')}}">
-          <div id="column1" style="width:200px;float:left;">
-            <p>Dictionary</p>
-            <select name="dictionary">
+
+<form method="POST" , action="{{ url_for('handle_data')}}">
+  <div class="form-group">
+    <label for="dictionary">Dictionary</label>
+    <select name="dictionary" class="form-control">
               <option value="bing"> bing </option>
               <option id="afinn96" value="afinn96"> afinn96 </option>
               <option id="afinn111" value="afinn111"> afinn111 </option>
@@ -24,69 +18,72 @@
               <option id="afinn_bing_base_bing" value="afinn_bing_base_bing"> afinn_bing_base_bing </option>
               <option id="afinn_bing_base_afinn" value="afinn_bing_base_afinn"> afinn_bing_base_afinn </option>
             </select>
-          </div>
-          <div id="column2" style="width:200px;float:left;">
-            <p>Sentiment discretization</p>
-            <select name="discretization">
+  </div>
+  <div class="form-group">
+    <label for="sentiment-discretization">Sentiment discretization</label>
+    <select name="discretization" class="form-control">
               <option id="2_discretized" value="2"> 2 </option>
               <option id="3_discretized" value="3"> 3 </option>
             </select>
-          </div>
-          <div id="column3" style="width:200px;float:left;">
-            <p>Type</p>
-            <select name="typo">
+  </div>
+  <div class="form-group">
+    <label for="type">Type</label>
+    <select name="typo" class="form-control">
               <option id="variation" value="variation"> variation </option>
               <option id="standard" value="standard"> standard </option>
             </select>
-          </div>
-          <div id="column4" style="width:200px;float:left;">
-            <p>transition tollerance</p>
-            <select name="tr-tollerance">
+  </div>
+  <div class="form-group">
+    <label for="tr-tollerance">transition tollerance</label>
+    <select name="tr-tollerance" class="form-control">
               <option  value="0.001"> 0.001 </option>
               <option  value="0.002"> 0.002 </option>
             </select>
-          </div>
-          <div id="column4" style="width:200px;float:left;">
-            <p>emission tollerance</p>
-            <select name="sm-tollerance">
+  </div>
+  <div class="form-group">
+    <label for="em-tollerance">emission tollerance</label>
+    <select name="sm-tollerance" class="form-control">
               <option  value="0.1"> 0.1 </option>
               <option value="0.2"> 0.2 </option>
             </select>
-          </div>
-          <input type="submit" value="Calcola"> 
-           <!-- <a href="{{ url_for('demo', dictionary = request.form['dictionary'], discretization = request.form['discretization'], typo = request.form['typo'],
+  </div>
+  <input type="submit" value="Calcola" class="btn btn-default">
+  <!-- <a href="{{ url_for('demo', dictionary = request.form['dictionary'], discretization = request.form['discretization'], typo = request.form['typo'],
          trtollerance = request.form['trtollerance'], smtollerance = request.form['smtollerance'])}}">
               <button type="button" class="btn btn-default btn-lg">
                 <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> Calcola
               </button>
             </a>-->
-        </form>
-      </div>
-      <div id = "results" style="width:800px;float:left;margin-top:50px">
-      {% if data %}
-        <div id="tables" style="width:800px;float:left;margin-top:50px">
-          
-              <p style="float:left;width: 250px" >Probabilità iniziale{{ data[0] }}</p>
-              <p style="float:left;width: 250px" >Tabella di transizione{{ data[1] }}</p>
-              <p style="float:left;width: 250px" >Tabella di emissione{{ data[2] }}</p>
-       
-        </div>
-        <div id="filtering" style="width:400px;float:left;margin-top:50px">
-         <p style="float:left;" > Filtraggio</p>
-          {% for i in range( 3,7) %}
-                <p style="float:left;width: 400px" >{{ data[i] }}</p>
-          {% endfor %}
-        </div>
-       <div id="viterbi" style="width:400px;float:left;margin-top:50px">
-          <p style="float:left;" > Viterbi</p>
-          {% for i in range( 7,11) %}
-                <p style="float:left;width: 400px" >{{ data[i] }}</p>
-          {% endfor %}
-        </div>
-       {% endif %}
-      </div>
-    </tbody>
-  </table>
+</form>
+</div>
+
+
+{% if data %}
+<div id="results" style="width:800px;float:left;margin-top:50px">
+  <div id="tables" style="width:800px;float:left;margin-top:50px">
+
+    <p style="float:left;width: 250px">Probabilità iniziale{{ data[0] }}</p>
+    <p style="float:left;width: 250px">Tabella di transizione{{ data[1] }}</p>
+    <p style="float:left;width: 250px">Tabella di emissione{{ data[2] }}</p>
+
+  </div>
+  <div id="filtering" style="width:400px;float:left;margin-top:50px">
+    <p style="float:left;"> Filtraggio</p>
+    {% for i in range( 3,7) %}
+    <p style="float:left;width: 400px">{{ data[i] }}</p>
+    {% endfor %}
+  </div>
+  <div id="viterbi" style="width:400px;float:left;margin-top:50px">
+    <p style="float:left;"> Viterbi</p>
+    {% for i in range( 7,11) %}
+    <p style="float:left;width: 400px">{{ data[i] }}</p>
+    {% endfor %}
+  </div>
+
+</div>
+{% endif %}
+
+</table>
 
 
 </div>
