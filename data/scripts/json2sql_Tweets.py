@@ -1,5 +1,6 @@
 import json
 import time
+import sys
 
 #extract the text from tweet json file
 def extractText(json_data):
@@ -25,28 +26,24 @@ def _removeNonAscii(s): return "".join(i for i in s if ord(i)<128)
 
 
 # main
-def main():
-    tweet_sql_file = "tweets_resolved_brexit.sql"
+def main(tweets_file):
+    tweet_sql_file = str(tweets_file[:-4])+".sql"
     # add the creation table at start
+    # DON'T use index, they slow down everything :)
     f = open(tweet_sql_file, 'a')
     table_creation = """USE experiments;
     CREATE TABLE IF NOT EXISTS tweets_resolved_brexit(
         id INT UNSIGNED NOT NULL,
         tweet varchar(255) NOT NULL,
-        tweet_date DATE NOT NULL,
-        PRIMARY KEY (id),
-        INDEX tweet_date (tweet_date)
+        tweet_date DATE NOT NULL
     );
-
     """
     f.write(table_creation)
     f.close
 
     # tweets json
-    tweets_file = "resolved_brexit.json"
     counter = 0
-
-    f = open(tweet_sql_file, 'a')
+    split_every = 100000
 
     # read line by line (rU heps because read one line at time)
     with open(tweets_file, 'rU') as lines:
@@ -60,12 +57,17 @@ def main():
                 tweet_text = str(tweet_text).replace("\\", "")
                 counter += 1
                 query = "INSERT INTO tweets_resolved_brexit VALUES (\'"+str(counter)+"\',\'"+tweet_text+"\',\'"+str(tweet_date)+"\');\n"
+                if counter % split_every == 0:
+                    print("split at:"+str(counter)+" in: "+str(tweet_sql_file))
+                    tweet_sql_file = tweet_sql_file[:-4] + "_s" + ".sql"
+                f = open(tweet_sql_file, 'a')
                 f.write(query)
+                f.close
 
-    f.close
+
 
 
 if __name__ == "__main__":
     start_time = time.time()
-    main()
+    main(sys.argv[1])
     print("--- %s seconds ---" % (time.time() - start_time))
