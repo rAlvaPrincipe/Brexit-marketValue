@@ -10,6 +10,7 @@ class Calculator:
 	transition_model = []
 	emission_model = []
 
+
 	def __init__(self, market_transition_f, market_emission_f, sentiment_f):
 		self.market_transition_f = market_transition_f
 		self.market_emission_f = market_emission_f
@@ -17,7 +18,7 @@ class Calculator:
 
 
 	# returns a nX2 matrix which associates a day with it's marke value
-	# input: path = "./Brexit-marketValue/datasets/Market_values.txt""
+	# input: path = file path
 	# output: [["Dec 05, 2016", 1.1971], ["Dec 06, 2016", 1.1832], ...]
 	def read(self, path):
 		data = []
@@ -33,10 +34,7 @@ class Calculator:
 		return data
 
 
-    ## Returns only the column of interest of an input matrix
-	## input: matrix: [["+0.34", "sale"], ["-0.002", "scende"], ...
-	##		  selector = 1
-	## output: ["sale", "scende, ...]
+    ##  Given a matrix and a column selector returns the selected column as 1D array
 	def col_select(self, matrix, selector):
 		sequence = []
 		for i in range(0, matrix.__len__()):
@@ -44,6 +42,12 @@ class Calculator:
 		return sequence
 
 
+
+	## Given the labels and a matrix it prints a pretty table
+	## input: header = the title of the table
+	##        columns_name = the labels of the columns
+	##        rows_name = the labels of the rows
+	##        data = matrix with data
 	def printer(self, header, columns_name, rows_name, data):
 		x = PrettyTable()
 		first_row = []
@@ -69,43 +73,13 @@ class Calculator:
 		print x
 
 
-	## returns a nX5 matrix which associate to each day the variation and a label for the variation
+    ## returns a nX6 matrix which associate to each day the variation and its label, the value and its label, the variation 
+    ## label based on the mean of all variations
 	## delta(day_t) = day_t - day_t-1
 	## input: values = [["Dec 05, 2016", 1.1971], ["Dec 06, 2016", 1.1832], ...]
 	##		  tollerance = 0.001, used to decide if a variation is to be considered "stable"
-	## output: [["Dec 05, 2016", 0, "nullo", 0,00023, "pos"], ["Dec 06, 2016", -0.0139, "scende", 0,00021, "pos"]..]
+	## output: [["Dec 05, 2016", 0, "nullo", 0,00023, "pos", "nullo"], ["Dec 06, 2016", -0.0139, "scende", 0,00021, "pos", "scendeTanto"]..]
 	## notice that delta(day_1) is setted to the default variation and label: 0 , "nullo"
-#	def delta(self, file, tollerance):
-#		values = self.read(file)
-#		deltas = []
-#		for count in range(0, values.__len__()):
-#			row = []
-#			row.append(values[count][0])
-#
-#			if count == 0:
-#				row.append(0)
-#				row.append("nullo")
-#			else:
-#				row.append(values[count][1] - values[count - 1][1])
-#				if abs(values[count][1] - values[count - 1][1]) <= tollerance:
-#					row.append("stabile")
-#				elif values[count][1] > values[count - 1][1]:
-#					row.append("sale")
-#				else:
-#					row.append("scende")
-#
-#			row.append(values[count][1])
-#			if values[count][1] >= 0:
-#				row.append("pos")
-#			elif values[count][1] < 0:
-#				row.append("neg")
-#
-#			deltas.append(row)
-#
-#		return deltas
-
-
-
 	def delta(self, file, tollerance):
 		values = self.read(file)
 		deltas = []
@@ -159,67 +133,13 @@ class Calculator:
 		return deltas
 
 
-	## Returns the transition model  based on the market values and tollerance
-	## input: values = [["Dec 05, 2016", 1.1971], ["Dec 06, 2016", 1.1832], ...]
-	##		tollerance = 0.001
-	## output: [[0.25, 0.25, 0.5], [0.4, 0.2, 0.4], [0.125, 0.375, 0.5]]
+
+	## Generates the transition model matrix
+	## input: hiddenVars = ["nullo", "sale", "scendere", "stabile", "sale", ..]
+	##		  hiddenVars_labeles = [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]]
 	## Notice that given n days, it will not consider the head and the tail because
 	## for the day_1 there is no information about the previous day, similarly for
 	## the day_n there is no information about the following day
-#	def build_transition_m(self, tollerance):
-#		values = self.col_select(self.delta(self.market_f, tollerance), 2)
-#
-#		# [[saleThenSale, saleThenStabile, saleThenScende], [stabileThenSale, stabileThenStabile, stabileThenScende], ...]
-#		freqs = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-#		sale = 0.0
-#		scende = 0.0
-#		stabile = 0.0
-#
-#		# Abslute frequences calculation
-#		for count in range(1, values.__len__() - 1):
-#			if values[count] == "sale":
-#				row_index = 0
-#				sale += 1
-#			elif values[count] == "stabile":
-#				row_index = 1
-#				stabile += 1
-#			elif values[count] == "scende":
-#				row_index = 2
-#				scende += 1
-#
-#			if values[count + 1] == "sale":
-#				col_index = 0
-#			elif values[count + 1] == "stabile":
-#				col_index = 1
-#			elif values[count + 1] == "scende":
-#				col_index = 2
-#			freqs[row_index][col_index] += 1
-#
-#		self.printer("FREQUENZE ASSOLUTE TRANSIZIONE", ["freqs"], ["sale", "stabile", "scende"], [sale, stabile, scende])
-#		self.printer("", ["sale", "stabile", "scende"], ["sale", "stabile", "scende"], freqs)
-		
-
-		# Transition model calculation
-#		transition_m = freqs
-#		for i in range(0, 3):
-#			if(sale > 0):
-#				transition_m[0][i] = freqs[0][i] / sale
-#			else:
-#				transition_m[0][i] = 0.0 
-#			if(stabile > 0):
-#				transition_m[1][i] = freqs[1][i] / stabile
-#			else:
-#				transition_m[1][i] = 0.0
-#			if(scende > 0):
-#				transition_m[2][i] = freqs[2][i] / scende
-#			else:
-#				transition_m[2][i] = 0.0
-
-#		self.printer("MODELLO DI TRANSIZIONE", ["sale", "stabile", "scende"], ["sale", "stabile", "scende"], transition_m)
-#		self.transition_model = transition_m
-
-
-
 	def build_transition_generic(self, hiddenVars, hiddenVars_labels):
 		# inizialization
 		freqs = []
@@ -267,12 +187,11 @@ class Calculator:
 
 
 
-	## Returns the emission table. It supports any observation discretization given "observations" and "observation_labels" 
-	## input: hiddenVars = [["day1", 0, "nullo"], ["day2", +0,0423, "sale"], ["day3", "-0.0001", "stabile"], ...]
-	##		hiddenVars_labels = [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]],
-	##		observations =  [0, 1, 1, 0, ...]
-	##		observations_labels = [["sent+", "0"], ["sent-", "1"]]
-	## output: [[0.0, 1.0], [0.0, 1.0], [0.222, 0.778]]
+	## Generates the emission table. 
+	## input: hiddenVars = ["nullo", "sale", "scendere", "stabile", "sale", ..]
+	##		  hiddenVars_labeles = [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]]
+	##		  observations =  ["nullo", "scendeTanto", "stabile", "salePoco", ...]
+	##		  observations_labels = [["sentSaleTanto", "saleTanto"], ["sentSalePoco", "salePoco"], ["sentStabile", "stabile"], ...]
 	def build_emission_generic(self, hiddenVars, observations, hiddenVars_labels, observations_labels):
 		# inizialization
 		freqs = []
@@ -317,6 +236,8 @@ class Calculator:
 
 
 
+    ## It allow you to config the type of transition or emission. Then based on the input parameters it
+    ## calls the transition model and emission model builders.
 	def config(self, transition_mod, emission_mod, market_tollerance, sentiment_tollerance):
 		if transition_mod == "variazione":
 			hiddenVars = self.col_select(self.delta(self.market_transition_f, market_tollerance), 2)
@@ -324,7 +245,7 @@ class Calculator:
 
 		elif transition_mod == "variazione_5":
 			hiddenVars = self.col_select(self.delta(self.market_transition_f, market_tollerance), 5)
-			hiddenVars_labels = [["saleTanto", "saleTanto"], ["salePoco", "salePoco"], ["stabile", "stabile"], ["scendePoco", "scendePoco"], ["scedeTanto", "scendeTanto"]]
+			hiddenVars_labels = [["saleTanto", "saleTanto"], ["salePoco", "salePoco"], ["stabile", "stabile"], ["scendePoco", "scendePoco"], ["scendeTanto", "scendeTanto"]]
 
 		self.build_transition_generic(hiddenVars, hiddenVars_labels)
 
@@ -339,7 +260,7 @@ class Calculator:
 
 		elif emission_mod == "variazione_5":
 			observations = self.col_select(self.delta( self.sentiment_f, sentiment_tollerance), 5)
-			observations_labels = [["sentSaleTanto", "saleTanto"], ["sentSalePoco", "salePoco"], ["sentStabile", "stabile"], ["sentScendePoco", "scendePoco"], ["sentScedeTanto", "scendeTanto"]]
+			observations_labels = [["sentSaleTanto", "saleTanto"], ["sentSalePoco", "salePoco"], ["sentStabile", "stabile"], ["sentScendePoco", "scendePoco"], ["sentScendeTanto", "scendeTanto"]]
 
 		# if market dataset is different for transition and emission
 		if transition_mod == "variazione":
