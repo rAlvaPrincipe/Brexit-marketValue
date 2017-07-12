@@ -183,7 +183,8 @@ class Calculator():
 
         #file .._ext.txt for extended days
         #file .txt for originary days
-        src_emission = vocabulary_request + "_sentiment_ext.txt"
+        src_emission_ext = vocabulary_request + "_sentiment_ext.txt"
+        src_emission = vocabulary_request + "_sentiment.txt"
         filtering = []
         predicted_sequence_filtering = []
         predicted_sequence_viterbi = []
@@ -198,13 +199,13 @@ class Calculator():
             if sentiment_discretization == 2:
                 O = mt.build_emission_generic(delta_stock,
                                               [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]],
-                                              self.standard_sequence(src_emission, 2 , sentiment_tollerance),
+                                              self.standard_sequence(src_emission_ext, 2 , sentiment_tollerance),
                                               [["sent+", "0"], ["sent-", "1"]]
                                               )
             if sentiment_discretization == 3:
                 O = mt.build_emission_generic(delta_stock,
                                               [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]],
-                                              self.standard_sequence(src_emission, 3 , sentiment_tollerance),
+                                              self.standard_sequence(src_emission_ext, 3 , sentiment_tollerance),
                                               [["sent+", "0"], ["sent=", "1"], ["sent-", "2"]]
                                               )
 
@@ -220,7 +221,7 @@ class Calculator():
             if sentiment_discretization == 2:
                 O = mt.build_emission_generic(delta_stock,
                                               [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]],
-                                              self.variation_sequence(src_emission, sentiment_discretization,
+                                              self.variation_sequence(src_emission_ext, sentiment_discretization,
                                                                       sentiment_tollerance),
                                               [["sentSale", "0"], ["sentScende", "1"]]
                                               )
@@ -231,6 +232,7 @@ class Calculator():
                                                                       sentiment_tollerance),
                                               [["sentSale", "0"], ["sentStabile", "1"], ["sentScende", "2"]]
                                               )
+
             mt.delta(mt.extract(src_emission), 0.0)
             model = Hmm(T, O, I)
             print("\n\nFiltering:")

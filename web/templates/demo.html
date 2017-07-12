@@ -62,14 +62,31 @@
             </a>-->
         </form>
       </div>
-      <div id = "results" style="width:800px;float:left;margin-top:50px">
+      <div id = "results" style="float:left;margin-top:50px">
       {% if data %}
-        <div id="tables" style="width:800px;float:left;margin-top:50px">
+        <div id="tables" style="float:left;margin-top:50px">
           
-              <p style="float:left;width: 250px" >Probabilità iniziale{{ data[0] }}</p>
-              <p style="float:left;width: 250px" >Tabella di transizione{{ data[1] }}</p>
-              <p style="float:left;width: 250px" >Tabella di emissione{{ data[2] }}</p>
-       
+               
+              <table style="float:left;width: 250px">
+              <p >Probabilità iniziale </p>
+                <tr><td>{{ti[0]}}</td><td>{{ti[1]}}</td><td>{{ti[2]}}</td></tr>
+              </table>
+              <div style="float:left;width: 250px">
+              <p>Tabella di transizione</p>
+              <table style="float:left;width: 250px">
+                <tr><td>{{tt[0][0]}}</td><td><{{tt[0][1]}}</td><td>{{tt[0][2]}}</td></tr>
+                <tr><td>{{tt[1][0]}}</td><td><{{tt[1][1]}}</td><td>{{tt[1][2]}}</td></tr>
+                <tr><td>{{tt[2][0]}}</td><td><{{tt[2][1]}}</td><td>{{tt[2][2]}}</td></tr>
+              </table>
+              </div>
+              <div style="float:left;width: 250px">
+              <p >Tabella di emissione</p>
+              <table style="float:left;width: 250px">
+                <tr><td>{{to[0][0]}}</td><td><{{to[0][1]}}</td><td>{{to[0][2]}}</td></tr>
+                <tr><td>{{to[1][0]}}</td><td><{{to[1][1]}}</td><td>{{to[1][2]}}</td></tr>
+                <tr><td>{{to[2][0]}}</td><td><{{to[2][1]}}</td><td>{{to[2][2]}}</td></tr>
+              </table>
+              </div>
         </div>
         <div id="filtering" style="width:400px;float:left;margin-top:50px">
          <p style="float:left;" > Filtraggio</p>
