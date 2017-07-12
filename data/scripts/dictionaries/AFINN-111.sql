@@ -1639,7 +1639,6 @@ INSERT INTO afinn111 VALUES ('silly', '-1');
 INSERT INTO afinn111 VALUES ('piss', '-4');
 INSERT INTO afinn111 VALUES ('cancelling', '-1');
 INSERT INTO afinn111 VALUES ('vindicated', '2');
-INSERT INTO afinn111 VALUES ('naïve', '-2');
 INSERT INTO afinn111 VALUES ('hardship', '-2');
 INSERT INTO afinn111 VALUES ('fidgety', '-2');
 INSERT INTO afinn111 VALUES ('intimidated', '-2');
