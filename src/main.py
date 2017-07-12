@@ -29,7 +29,7 @@ def main():
 	dataset_tweets = "tweets"
 	n_weeks = 4
 	sent  = Sentiment(vocabulary, dataset_tweets, n_weeks)
-	#sent.generate_observations()
+	sent.generate_observations()
  
 
  #===================================================TRANSITION AND EMISSION MODEL =============================================================
