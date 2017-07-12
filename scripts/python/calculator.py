@@ -95,6 +95,8 @@ class Calculator():
 
     def correspondence(self, state, prediction):
         count_corr = 0.0
+        print("state"+str(state.__len__()))
+        print("prediction" + str(prediction.__len__()))
         for count in range(1, state.__len__()):
             if (str(state[count][2]) == str(prediction[count - 1])):
                 count_corr += 1
@@ -149,19 +151,28 @@ class Calculator():
 
         ##Compute sentiment extended
 
-        days_ext = [
-            '2016/11/28', '2016/11/29', '2016/11/30', '2016/12/01', '2016/12/02',
-            '2016/12/05', '2016/12/06', '2016/12/07', '2016/12/08', '2016/12/09',
-            '2016/12/12', '2016/12/13', '2016/12/14', '2016/12/15', '2016/12/16',
-            '2016/12/19', '2016/12/20', '2016/12/21', '2016/12/22', '2016/12/23',
-            '2016/12/27', '2016/12/28', '2016/12/29', '2016/12/30',
-            '2017/01/02', '2017/01/03', '2017/01/04', '2017/01/05', '2017/01/06',]
+        #days_ext = [
+        #    '2016/11/28', '2016/11/29', '2016/11/30', '2016/12/01', '2016/12/02',
+        #    '2016/12/05', '2016/12/06', '2016/12/07', '2016/12/08', '2016/12/09',
+        #    '2016/12/12', '2016/12/13', '2016/12/14', '2016/12/15', '2016/12/16',
+        #    '2016/12/19', '2016/12/20', '2016/12/21', '2016/12/22', '2016/12/23',
+        #    '2016/12/27', '2016/12/28', '2016/12/29', '2016/12/30',
+        #   '2017/01/02', '2017/01/03', '2017/01/04', '2017/01/05', '2017/01/06',]
+
+        #read days
+        file = open('D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\extended-dataset\output_date_market.txt')
+        market = file.read().split("\n")
+        days_ext = []
+        for line in market:
+            splitted_line = line.split("  ")
+            days_ext.append(splitted_line[0])
+        file.close()
 
         days_sentiment = {}
         vocabulary = sm.retrieveVocabulary(vocabulary_request)
 
         out_file = open(vocabulary_request + "_sentiment_ext.txt", "w")
-        for i in range(0, days.__len__()):
+        for i in range(0, days_ext.__len__()):
             days_sentiment[i] = sm.day_sentiment(days_ext[i], vocabulary)
             out_file.write(days_ext[i] + "   " + str(days_sentiment[i]) + "\n")
             print(days_sentiment[i])
@@ -176,11 +187,12 @@ class Calculator():
         # for unix users
         #src = "../../datasets/Market_values.txt"
         #src_ext = "../../datasets/Market_values_ext.txt"
+        #src_new = "../../datasets/extended-dataset/output_date_market.txt"
 
         # for valzo
         src = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values.txt"
         src_ext = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\Market_values_ext.txt"
-
+        src_new = "D:\Dropbox\Git_Projects\Brexit-marketValue\datasets\extended-dataset\output_date_market.txt"
         #file .._ext.txt for extended days
         #file .txt for originary days
         src_emission_ext = vocabulary_request + "_sentiment_ext.txt"
@@ -189,9 +201,9 @@ class Calculator():
         predicted_sequence_filtering = []
         predicted_sequence_viterbi = []
 
-        T = mt.build_transition_m(mt.extract(src_ext), market_tollerance)
+        T = mt.build_transition_m(mt.extract(src_new), market_tollerance)
         I = [1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0]
-        delta_stock = mt.delta(mt.extract(src), market_tollerance)
+        delta_stock = mt.delta(mt.extract(src_new), market_tollerance)
 
 
         if sentiment_type == "standard":
@@ -211,10 +223,10 @@ class Calculator():
 
             model = Hmm(T, O, I)
             print("\n\nFiltering:")
-            filtering = model.filtering(19, self.standard_sequence(src_emission, sentiment_discretization, sentiment_tollerance))
+            filtering = model.filtering(19, self.standard_sequence(src_emission_ext, sentiment_discretization, sentiment_tollerance))
             predicted_sequence_filtering = model.get_steps()
             print("\n\nViterbi:")
-            predicted_sequence_viterbi = model.viterbi(self.standard_sequence(src_emission, sentiment_discretization, sentiment_tollerance))
+            predicted_sequence_viterbi = model.viterbi(self.standard_sequence(src_emission_ext, sentiment_discretization, sentiment_tollerance))
 
         elif sentiment_type == "variation":
 
@@ -228,12 +240,12 @@ class Calculator():
             if sentiment_discretization == 3:
                 O = mt.build_emission_generic(delta_stock,
                                               [["sale", "sale"], ["stabile", "stabile"], ["scende", "scende"]],
-                                              self.variation_sequence(src_emission, sentiment_discretization,
+                                              self.variation_sequence(src_emission_ext, sentiment_discretization,
                                                                       sentiment_tollerance),
                                               [["sentSale", "0"], ["sentStabile", "1"], ["sentScende", "2"]]
                                               )
 
-            mt.delta(mt.extract(src_emission), 0.0)
+
             model = Hmm(T, O, I)
             print("\n\nFiltering:")
             filtering = model.filtering(19, self.variation_sequence(src_emission, sentiment_discretization, sentiment_tollerance))
@@ -251,18 +263,18 @@ class Calculator():
 #            print("\n\nViterbi:")
 #            predicted_sequence_viterbi = model.viterbi(self.boolean_normalized_sequence(src_emission, tollerance_norm))
 
-
+        delta_stock_19 = mt.delta(mt.extract(src_emission), sentiment_tollerance)
 
         print("\n\nFiltering accuratezza:")
         print("L'accuratezza del filtraggio e' " +
-             str(self.correspondence(delta_stock, predicted_sequence_filtering)))
+             str(self.correspondence(delta_stock_19, predicted_sequence_filtering)))
         print("L'accuratezza rilassata del filtraggio e' " + str(
-            self.correspondence_relaxed(delta_stock, predicted_sequence_filtering)))
+            self.correspondence_relaxed(delta_stock_19, predicted_sequence_filtering)))
         print("\n\nViterbi accuratezza:")
         print("L'accuratezza di Viterbi e' " +
-              str(self.correspondence(delta_stock, predicted_sequence_viterbi)))
+              str(self.correspondence(delta_stock_19, predicted_sequence_viterbi)))
         print("L'accuratezza rilassata di Viterbi e' " +
-              str(self.correspondence_relaxed(delta_stock, predicted_sequence_viterbi)))
+              str(self.correspondence_relaxed(delta_stock_19, predicted_sequence_viterbi)))
 
         result=[]
         #matrici
@@ -272,12 +284,12 @@ class Calculator():
         #filtraggio
         result.append(model.get_steps_complete())
         result.append(model.get_steps())
-        result.append("\nL'accuratezza del filtraggio e' " +str(self.correspondence(delta_stock, predicted_sequence_filtering)))
-        result.append("\nL'accuratezza rilassata del filtraggio e' "+ str(self.correspondence_relaxed(delta_stock, predicted_sequence_filtering)))
+        result.append("\nL'accuratezza del filtraggio e' " +str(self.correspondence(delta_stock_19, predicted_sequence_filtering)))
+        result.append("\nL'accuratezza rilassata del filtraggio e' "+ str(self.correspondence_relaxed(delta_stock_19, predicted_sequence_filtering)))
         #viterbi
         result.append(model.get_viterbi_steps())
         result.append(predicted_sequence_viterbi)
-        result.append("\nL'accuratezza di Viterbi e' " +  str(self.correspondence(delta_stock, predicted_sequence_viterbi)))
-        result.append("\nL'accuratezza rilassata di Viterbi e' " + str(self.correspondence_relaxed(delta_stock, predicted_sequence_viterbi)))
+        result.append("\nL'accuratezza di Viterbi e' " +  str(self.correspondence(delta_stock_19, predicted_sequence_viterbi)))
+        result.append("\nL'accuratezza rilassata di Viterbi e' " + str(self.correspondence_relaxed(delta_stock_19, predicted_sequence_viterbi)))
 
         return result

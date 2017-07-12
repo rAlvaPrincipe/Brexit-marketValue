@@ -14,5 +14,5 @@ if __name__ == "__main__":
         # sentiment_type = standard, variation, normalized
         # tollerance for 3 type of discretization
         vocabular="bing"
-        #calculator.compute_sentiment(vocabular)
-        calculator.start(vocabular, "variation" ,0.001, 0.1, 3)
+        calculator.compute_sentiment(vocabular)
+        #calculator.start(vocabular, "variation" ,0.001, 0.1, 3)

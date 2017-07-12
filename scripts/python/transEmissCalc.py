@@ -46,8 +46,8 @@ def delta(values, tollerance):
                 column.append("scende")
                 state_sequence.append("scende")
         deltas.append(column)
-    print(state_sequence)
-
+    print("transemiss"+str(state_sequence))
+    print("transemiss"+str(deltas))
     return deltas
 
 
