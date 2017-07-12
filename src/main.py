@@ -5,7 +5,7 @@ from hmm import Hmm
 
 def correspondence(state, prediction):
 	count_corr = 0.0
-	for count in range(1, state.__len__()):
+	for count in range(1, prediction.__len__()):
 		if str(state[count]) == str(prediction[count - 1]):
 			count_corr += 1
 
