@@ -1,4 +1,5 @@
 import sys
+import collections
 
 
 def retrieve_market(market_file):
@@ -71,6 +72,10 @@ def main():
             if len(new_market) != len(new_sentiment):
                 raise ValueError('error in new market and sentiment length!')
                 return -1
+
+            #order data
+            new_sentiment = collections.OrderedDict(sorted(new_sentiment.items()))
+            new_market = collections.OrderedDict(sorted(new_market.items()))
 
             #write new sentiment
             outputSentiment = open("./output/output_sentiment_"+ v +"_market_from_"+ m +".txt", "w")
