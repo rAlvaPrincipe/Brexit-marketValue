@@ -89,17 +89,19 @@ def main():
 
 	hmm_model = Hmm(I, calc.T, calc.O)
 
-	steps = 96
+	steps = observations.__len__()
 	hmm_model.filtering(steps, observations, observations_labels, hiddenVars_labels)
 	print("\nFITERING: ")
 	print(correspondence(hiddenVars, hmm_model.get_steps()))
 
-	steps = 97
+	#steps = 97
 	#hmm_model.prediction(steps, observations[:90], observations_labels, hiddenVars_labels)
 	
 	print("\nVITERBI:")
+	del observations[0]  # delete first element: "nullo"
 	veterbi_seq = hmm_model.viterbi(observations, observations_labels, hiddenVars_labels)
 	print(correspondence(hiddenVars, veterbi_seq))
+
 
 
 

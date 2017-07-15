@@ -166,7 +166,7 @@ class Hmm:
 		temp = labels
 		labels = (temp[::-1])
 
-		print labels
+		#print labels
 
 		return labels
 
