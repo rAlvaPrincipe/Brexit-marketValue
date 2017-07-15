@@ -11,7 +11,8 @@ class Sentiment:
 	def __init__(self, vocabulary_name, tweet_table, weeks ):
 		self.retrieve_vocabulary(vocabulary_name)
 		self.tweet_table = tweet_table
-		self.output_f =  "w" + str(weeks) + "_" + vocabulary_name + "_" + tweet_table + ".txt"
+	#	self.output_f =  "w" + str(weeks) + "_" + vocabulary_name + "_" + tweet_table + ".txt"
+		self.output_f = "/home/renzo/rAlvaPrincipe/refactoring/Brexit-marketValue/data/preprocessed_data/output/output_sentiment_afinn_bing_base_afinn_market_from_ecb.europa.eu.txt"
 		if weeks == 4:
 			self.days = ['2016/12/05', '2016/12/06', '2016/12/07', '2016/12/08', '2016/12/09',
 						 '2016/12/12', '2016/12/13', '2016/12/14', '2016/12/15', '2016/12/16',
