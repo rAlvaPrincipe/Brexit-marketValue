@@ -35,8 +35,8 @@ def main():
 
  #===================================================TRANSITION AND EMISSION MODEL =============================================================
 
-	market_transition_f = "/home/renzo/rAlvaPrincipe/refactoring/Brexit-marketValue/data/preprocessed_data/output/output_market_afinn_bing_base_afinn_market_from_ecb.europa.eu.txt"
-	market_emission_f   = "/home/renzo/rAlvaPrincipe/refactoring/Brexit-marketValue/data/preprocessed_data/output_market_afinn96_market_from_investing.com.txt"
+	market_transition_f = "../data/preprocessed_data/output/output_market_afinn_bing_base_afinn_market_from_ecb.europa.eu.txt"
+	market_emission_f   = "../data/preprocessed_data/output/output_market_afinn_bing_base_afinn_market_from_ecb.europa.eu.txt"
 	market_emission_f = market_transition_f
 	calc = Calculator(market_transition_f, market_emission_f, sent.output_f)
 

@@ -11,12 +11,13 @@ class Hmm:
 		self.O = O
 
 
-
+	# print the label associated to prediction step o update step
 	def get_steps(self):
 		labels = []
 		for i in range(0, self.steps.__len__()):
 			labels.append(self.steps[i][1])       #1 for prediction labels, 4 for filtering labels
 		return labels
+
 
 	def filtering(self, n_steps, observations, observations_labels, hiddenVars_labels):
 		out = self.I
@@ -75,7 +76,7 @@ class Hmm:
 
 
 
-	 # diagonal generate a diagonal matrix
+	 # diagonal generate a diagonal matrix from a emission model column
 	def diagonal(self, observation_index):
 		transpose = np.array(self.O).transpose()
 		return np.diag(transpose[observation_index])
@@ -166,7 +167,6 @@ class Hmm:
 		temp = labels
 		labels = (temp[::-1])
 
-		#print labels
 
 		return labels
 
