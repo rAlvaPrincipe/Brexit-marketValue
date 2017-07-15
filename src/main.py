@@ -98,7 +98,8 @@ def main():
 	#hmm_model.prediction(steps, observations[:90], observations_labels, hiddenVars_labels)
 	
 	print("\nVITERBI:")
-	hmm_model.viterbi(observations, observations_labels, hiddenVars_labels)
+	veterbi_seq = hmm_model.viterbi(observations, observations_labels, hiddenVars_labels)
+	print(correspondence(hiddenVars, veterbi_seq))
 
 
 
