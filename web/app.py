@@ -34,7 +34,8 @@ def handle_data():
 	ti.append(round(data[0],2))
 	ti.append(round(data[1],2))
 	ti.append(round(data[2],2))
-	return render_template('demo.html', ti=ti, tt=result[1] , to=result[1] , filtering = result[2], data=result)
+
+	return render_template('demo.html', ti=result[0], tt=result[1] , to=result[2], oss_row=result[2].__len__(), oss_col=len(result[2].columns), data=result)
 
 @app.route('/dictionary')
 @app.route('/dictionary/<name>/<offset>/<limit>')

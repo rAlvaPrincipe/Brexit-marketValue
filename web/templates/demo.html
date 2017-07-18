@@ -9,7 +9,8 @@
 <div class="table-responsive">
   <table class="table table-striped">
     <thead class=".important">
- 
+        <script src="resources/js/script.js"></script>
+        <script src="resources/js/jquery-3.1.1.js"></script>
     </thead>
     <tbody>
       <div id="parameters">
@@ -62,45 +63,58 @@
             </a>-->
         </form>
       </div>
-      <div id = "results" style="float:left;margin-top:50px">
+      <div id = "results" style="float:left;margin-top:50px;width:900px">
       {% if data %}
         <div id="tables" style="float:left;margin-top:50px">
-          
-               
-              <table style="float:left;width: 250px">
-              <p >Probabilità iniziale </p>
-                <tr><td>{{ti[0]}}</td><td>{{ti[1]}}</td><td>{{ti[2]}}</td></tr>
-              </table>
-              <div style="float:left;width: 250px">
-              <p>Tabella di transizione</p>
-              <table style="float:left;width: 250px">
-                <tr><td>{{tt[0][0]}}</td><td><{{tt[0][1]}}</td><td>{{tt[0][2]}}</td></tr>
-                <tr><td>{{tt[1][0]}}</td><td><{{tt[1][1]}}</td><td>{{tt[1][2]}}</td></tr>
-                <tr><td>{{tt[2][0]}}</td><td><{{tt[2][1]}}</td><td>{{tt[2][2]}}</td></tr>
-              </table>
-              </div>
-              <div style="float:left;width: 250px">
-              <p >Tabella di emissione</p>
-              <table style="float:left;width: 250px">
-                <tr><td>{{to[0][0]}}</td><td><{{to[0][1]}}</td><td>{{to[0][2]}}</td></tr>
-                <tr><td>{{to[1][0]}}</td><td><{{to[1][1]}}</td><td>{{to[1][2]}}</td></tr>
-                <tr><td>{{to[2][0]}}</td><td><{{to[2][1]}}</td><td>{{to[2][2]}}</td></tr>
-              </table>
-              </div>
+          <table style="float:left;width: 300px;border:1px">
+            <p >Probabilità iniziale </p>
+            <tr><td>{{ti[0]}}</td></tr><tr><td>{{ti[1]}}</td></tr><tr><td>{{ti[2]}}</td></tr>
+          </table>
+          <div style="float:left;width: 300px">
+          <p>Tabella di transizione</p>
+          <table style="float:left;width: 300px;border:1px">
+            <tr><td>{{tt[0][0]}}</td><td><{{tt[0][1]}}</td><td>{{tt[0][2]}}</td></tr>
+            <tr><td>{{tt[1][0]}}</td><td><{{tt[1][1]}}</td><td>{{tt[1][2]}}</td></tr>
+            <tr><td>{{tt[2][0]}}</td><td><{{tt[2][1]}}</td><td>{{tt[2][2]}}</td></tr>
+          </table>
+          </div>
+          <div style="float:left;width: 250px">
+            <p >Tabella di emissione</p>
+            <table style="float:left;width: 250px;border:1px">
+              <tr><td>{{to[0][0]}}</td><td><{{to[1][0]}}</td>                               {% if oss_col==3 %}<td>{{to[2][0]}}</td>{% endif %}</tr>
+              <tr><td>{{to[0][1]}}</td><td><{{to[1][1]}}</td>                               {% if oss_col==3 %}<td>{{to[2][1]}}</td>{% endif %}</tr>
+              {% if oss_row==3 %}<tr><td>{{to[0][2]}}</td><td><{{to[1][2]}}</td>{% endif %} {% if oss_col==3 %}<td>{{to[2][2]}}</td>{% endif %}</tr>
+              
+            </table>
+          </div>
         </div>
-        <div id="filtering" style="width:400px;float:left;margin-top:50px">
-         <p style="float:left;" > Filtraggio</p>
-          {% for i in range( 3,7) %}
-                <p style="float:left;width: 400px" >{{ data[i] }}</p>
-          {% endfor %}
+        <div id="filtering" style="width:800px;float:left;margin-top:50px">
+          <p style="float:left;width: 800px" > Filtraggio</p>
+          <div>
+            <p style="float:left;width: 800px" >Risultati Filtraggio:</p>
+            {% for i in range( 3,6) %}
+            <p style="float:left;width: 800px" >{{ data[i] }}</p>
+            {% endfor %}
+          </div>
+          <div>
+            <p style="float:left;width: 800px" >Calcoli Filtraggio</p>
+            {{ data[6] }}
+          </div>
         </div>
-       <div id="viterbi" style="width:400px;float:left;margin-top:50px">
-          <p style="float:left;" > Viterbi</p>
-          {% for i in range( 7,11) %}
-                <p style="float:left;width: 400px" >{{ data[i] }}</p>
-          {% endfor %}
+        <div id="viterbi" style="width:800px;float:left;margin-top:50px">
+          <p style="float:left;width: 800px" > Viterbi</p>
+          <div style="float:left;width: 800px" >
+            <p style="float:left;width: 800px" >Risultati Viterbi</p>
+            {% for i in range( 7,10) %}
+            <p style="float:left;width: 800px" >{{ data[i] }}</p>
+            {% endfor %}
+          </div>
+          <div style="float:left;width: 800px" >
+            <p style="float:left;width: 800px" >Calcoli Viterbi</p>
+            {{ data[10] }}
+          </div>
         </div>
-       {% endif %}
+        {% endif %}
       </div>
     </tbody>
   </table>

@@ -1,7 +1,8 @@
 import transEmissCalc as mt
 import sentiment as sm
 import numpy as np
-
+import pandas as pd
+from decimal import *
 # -*- coding: utf-8 -*-
 from hmm import Hmm
 
@@ -279,17 +280,25 @@ class Calculator():
         result=[]
         #matrici
         result.append(I)
-        result.append(T)
-        result.append(O)
+
+        trans=pd.DataFrame(T)
+        trans = np.round(trans, 3)
+        result.append(trans)
+
+        oss = pd.DataFrame(O)
+        oss = np.round(oss, 3)
+        result.append(oss)
         #filtraggio
-        result.append(model.get_steps_complete())
+
         result.append(model.get_steps())
         result.append("\nL'accuratezza del filtraggio e' " +str(self.correspondence(delta_stock_19, predicted_sequence_filtering)))
         result.append("\nL'accuratezza rilassata del filtraggio e' "+ str(self.correspondence_relaxed(delta_stock_19, predicted_sequence_filtering)))
+        result.append(model.get_steps_complete())
         #viterbi
-        result.append(model.get_viterbi_steps())
+
         result.append(predicted_sequence_viterbi)
         result.append("\nL'accuratezza di Viterbi e' " +  str(self.correspondence(delta_stock_19, predicted_sequence_viterbi)))
         result.append("\nL'accuratezza rilassata di Viterbi e' " + str(self.correspondence_relaxed(delta_stock_19, predicted_sequence_viterbi)))
+        result.append(model.get_viterbi_steps())
 
         return result
