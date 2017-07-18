@@ -7,34 +7,42 @@
 {% endblock %} {% block content %}
 <h1>{{ name }}</h1>
 
+<div class="col-xs-4">
+  <form action="{{ url_for('sentiment') }}" method="post">
+    <div class="form-group">
+      <label for="tweet_text">Tweet Text</label>
+      <input type="text" class="form-control" name="tweet" placeholder="I hate hate hate, three times!, the #brexit">
+    </div>
+    <div class="form-group">
+      <label for="dictionary">Dictionary</label>
+      <select class="form-control" name="dictionary">
+              <option value="afinn96">AFINN-96</option>
+              <option value="afinn111">AFINN-111</option>
+              <option value="bing">BING</option>
+              <option value="afinn_bing_base_bing">AFINN-111 base BING</option>
+              <option value="afinn_bing_base_afinn">AFINN-111 base AFINN</option>
+              <option value="nrc">NRC</option>
+            </select>
+    </div>
 
-<form action="{{ url_for('sentiment') }}" method="post">
-  <div class="form-group">
-    <label for="tweet_text">Tweet Text</label>
-    <input type="text" class="form-control" name="tweet" placeholder="I hate hate hate, three times!, the #brexit">
+    <button type="submit" class="btn btn-default">Submit</button>
+
+  </form>
+</div>
+
+<div style="clear: both;">
+  <br> {% if sentiment %}
+
+  <div>
+    <p>Tweet: <pre>{{ tweet }}</pre></p>
   </div>
-  <div class="form-group">
-    <label for="dictionary">Dictionary</label>
-    <select class="form-control" name="dictionary">
-      <option value="afinn96">AFINN-96</option>
-      <option value="afinn111">AFINN-111</option>
-      <option value="bing">BING</option>
-      <option value="afinn_bing_base_bing">AFINN-111 base BING</option>
-      <option value="afinn_bing_base_afinn">AFINN-111 base AFINN</option>
-      <option value="nrc">NRC</option>
-    </select> </div>
+  <div>
+    <p>Sentiment calculated on "{{ dictionary }}": <b> <pre>{{ sentiment }}</pre> </b></p>
+  </div>
 
-  <button type="submit" class="btn btn-default">Submit</button>
-
-</form>
-
-<br> {% if sentiment %}
-<div>
-  <p>Tweet: <pre>{{ tweet }}</pre></p>
+  {% endif %}
 </div>
-<div>
-  <p>Sentiment calculated on "{{ dictionary }}": <b> <pre>{{ sentiment }}</pre> </b></p>
-</div> {% endif %}
 
-</div>
+
+
 {% endblock %}
