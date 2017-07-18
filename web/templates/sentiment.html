@@ -28,8 +28,13 @@
 
 </form>
 
-{% if sentiment %}
-<h1>Sentiment {{ sentiment }}!</h1> {% endif %}
+<br> {% if sentiment %}
+<div>
+  <p>Tweet: <pre>{{ tweet }}</pre></p>
+</div>
+<div>
+  <p>Sentiment calculated on "{{ dictionary }}": <b> <pre>{{ sentiment }}</pre> </b></p>
+</div> {% endif %}
 
 </div>
 {% endblock %}

@@ -44,7 +44,13 @@ def sentiment():
     if request.method == 'POST':
         tweet = str(request.form['tweet'])
         dictionary = str(request.form['dictionary'])
-        sentiment = "<here calculate sentiment!>"
+        #calculate sentiment
+        sentiment_main = Sentiment(dictionary, "", 0)
+        sentiment = sentiment_main.sentiment(tweet)
+        #check if sentiment is zero
+        if sentiment == 0.0:
+            sentiment = "zero. No words found."
+
         return render_template('sentiment.html', tweet=tweet, dictionary=dictionary, sentiment=sentiment)
     else:
         return render_template('sentiment.html')
