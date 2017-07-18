@@ -4,7 +4,7 @@ import sys, os, subprocess
 # same as cd /web/ --> cd ../ --> cd src
 lib_path = os.path.abspath(os.path.join('..', 'src'))
 sys.path.append(lib_path)
-from calculator import Calculator
+from interface import Interface
 from sentiment import Sentiment
 
 app = Flask(__name__)
@@ -27,10 +27,16 @@ def demo():
 	return render_template('demo.html')
 @app.route('/handle_data', methods=['GET','POST'])
 def handle_data():
-	calc = Calculator()
-	result = calc.start(str(request.form.get('dictionary')), str(request.form.get('typo')), float(request.form.get('tr-tollerance')), float(request.form.get('sm-tollerance')), int(request.form.get('discretization')))
+	interface = Interface()
+	result = interface.compute(str(request.form.get('dictionary')), int(request.form.get('mk-discretization')), int(request.form.get('sm-discretization')), str(request.form.get('typo')), float(request.form.get('tr-tollerance')), float(request.form.get('sm-tollerance')))
+	data=result[0]
+	ti=[]
+	ti.append(round(data[0],2))
+	ti.append(round(data[1],2))
+	ti.append(round(data[2],2))
 
-	return render_template('demo.html', data=result)
+	return render_template('demo.html', ti=result[0], tt=result[1] , to=result[2].transpose(), oss_row=result[2].__len__(), oss_col=len(result[2].columns), tr_row=result[1].__len__(), tr_col=len(result[1].columns), data=result)
+
 
 #sentiment
 @app.route('/sentiment', methods=['POST', 'GET'])

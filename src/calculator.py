@@ -1,3 +1,5 @@
+import pandas as pd
+import numpy as np
 import sys
 import copy
 sys.path.append("lib/prettytable-0.7.2")
@@ -233,6 +235,7 @@ class Calculator:
 		self.printer("MODELLO DI EMISSIONE:", column_labels, row_labels, emission_m)
 
 		self.O = emission_m
+
 
 
 
