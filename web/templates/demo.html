@@ -8,7 +8,7 @@
 <script src="{{ url_for('static', filename='jquery-3.1.1.js') }}"></script> {% endblock %} {% block content %}
 <h1>{{ name }}</h1>
 
-<div id="parameters">
+<div id="parameters" class="col-xs-4">
   <form method="POST" , action="{{ url_for('handle_data')}}">
 
     <div class="form-group">
