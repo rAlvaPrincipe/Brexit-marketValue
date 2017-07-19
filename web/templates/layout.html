@@ -2,6 +2,9 @@
 <html>
 
 <head>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <script src="{{ url_for('static', filename='Chart.js') }}"></script>
+  <script src="{{ url_for('static', filename='jquery-3.1.1.js') }}"></script> 
   <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-theme.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='layout.css') }}">
@@ -9,7 +12,7 @@
   {% block head %} {% endblock %}
 </head>
 
-<body>
+<body onload="initGraph()">
   <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
       <div class="navbar-header">
@@ -36,7 +39,7 @@
           {% block sidebar %}
           <li class="submenu">Menu</li>
           <li><a href="{{ url_for('index') }}">Home</a></li>
-          <li><a href="#">Problema</a></li>
+          <li><a href="{{ url_for('correlation')}}">Correlazione</a></li>
           <li><a href="{{ url_for('demo')}}">Demo</a></li>
           <li><a href="{{ url_for('sentiment')}}">Demo sentiment</a></li>
           <li class="submenu">Datasets</li>

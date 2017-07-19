@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, jsonify
 from flask_mysqldb import MySQL
 import sys, os, subprocess
 import pandas as pd
@@ -36,7 +36,8 @@ def demo():
 		sent  = Sentiment(vocabulary, "tweets", 4) #only vocabulary is important
 
 		############# TRANSITION AND EMISSION MODEL
-		root = "../data/preprocessed_data/output/"
+		root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/output/"
+		root = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\output\\"
 		market_transition_f = root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
 		market_emission_f	= root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
 		sentiment_f = root+"output_sentiment_"+vocabulary+"_market_from_"+market+".txt"
@@ -104,6 +105,7 @@ def demo():
 		# 0			  1					2		3			4
 		# prediction_step | prediction_Step_label | update | normalization | normalization label
 		all_steps = hmm_model.steps
+
 		data = True
 		return render_template('demo.html', prob_matrix=prob_matrix, transition_matrix= transition_matrix, emission_matrix=emission_matrix,
 						 prob_matrix_len=len(I), transition_matrix_len=len(calc.T),emission_matrix_len=len(calc.O),
@@ -130,6 +132,47 @@ def sentiment():
 		return render_template('sentiment.html', tweet=tweet, dictionary=dictionary, sentiment=sentiment)
 	else:
 		return render_template('sentiment.html')
+#correlation
+@app.route('/correlation', methods=['POST', 'GET'])
+def correlation():
+        return render_template('correlation.html')
+
+@app.route('/load/graph', methods=['POST', 'GET'])
+def data():
+    data=[]
+    print(str(request.json))
+    vocabulary = str(request.args.get('vocabulary'))
+    market = str(request.args.get('market'))
+    root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/output/"
+    root = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\output\\"
+
+    market_f = root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
+
+    file = open(market_f)
+
+    days_temp = []
+    column1=[]
+    column2=[]
+    column3=[]
+    for line in file:
+        splitted_line = line.split("\t")
+        column1.append(splitted_line[0])
+        column2.append(splitted_line[1][:-1])
+    file.close()
+
+    root2 = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\gui_files\\"
+    sentiment_f = root2+"sentimentVariation_"+vocabulary+"_"+market+".txt"
+
+    file = open(sentiment_f)
+
+    for line in file:
+        splitted_line = line.split("\t")
+        column3.append(splitted_line[1][:-1])
+    file.close()
+    data.append(column1)
+    data.append(column2)
+    data.append(column3)
+    return jsonify(data)
 
 #tweets
 @app.route('/tweets')

@@ -1,0 +1,61 @@
+{% extends "layout.html" %} {% block title %}Sentiment{% endblock %} {% block head %} {{ super() }}
+<style type="text/css">
+  .important {
+    color: #336699;
+  }
+</style>
+{% endblock %} {% block content %}
+<h1>{{ name }}</h1>
+
+<div class="row">
+  <form action="{{ url_for('correlation') }}" method="post">
+<div class="col-xs-5">
+<div class="form-group">
+      <label for="vocabulary">Vocabulary</label>
+      <select id="vocabulary" class="form-control">
+              <option value="bing"> bing </option>
+              <option id="afinn96" value="afinn96"> afinn96 </option>
+              <option id="afinn111" value="afinn111"> afinn111 </option>
+              <option id="nrc" value="nrc"> nrc </option>
+              <option id="afinn_bing_base_bing" value="afinn_bing_base_bing"> afinn_bing_base_bing </option>
+              <option id="afinn_bing_base_afinn" value="afinn_bing_base_afinn"> afinn_bing_base_afinn </option>
+            </select>
+    </div>
+</div>
+<div class="col-xs-5">
+    <div class="form-group">
+      <label for="market">Market source</label>
+      <select id="market" class="form-control">
+              <option value="ecb.europa.eu"> ecb.europa.eu </option>
+              <option id="exchangerates.com" value="exchangerates.com"> exchangerates.com </option>
+              <option id="investing.com" value="investing.com"> investing.com </option>
+              <option id="ofx.com" value="ofx.com"> ofx.com </option>
+              <option id="pundsterlinglive.com" value="pundsterlinglive.com"> pundsterlinglive.com </option>
+            </select>
+    </div>
+</div>
+
+   
+<div class="col-xs-1">
+    <button type="button" class="btn btn-default" style="margin-top: 25px;" onclick="loadData()">Submit</button>
+</div>
+
+  </form>
+</div>
+<div class="row" >
+<div class="col-xs-10">
+        <div id="graph-container-1" style="width:900px;float:left;">
+          <canvas class="chart" id="chart1"  ></canvas>
+        </div>
+        </div>
+  <div class="col-xs-2">
+  <p style="padding-top:100px">Correlazione</p>
+    <div id="correlation"></div>
+  </div>
+</div>
+
+
+
+
+
+{% endblock %}
