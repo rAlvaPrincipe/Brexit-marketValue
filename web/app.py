@@ -36,8 +36,8 @@ def demo():
 		sent  = Sentiment(vocabulary, "tweets", 4) #only vocabulary is important
 
 		############# TRANSITION AND EMISSION MODEL
-		root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/output/"
-		#root = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\output\\"
+		#root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/output/"
+		root = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\output\\"
 		market_transition_f = root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
 		market_emission_f	= root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
 		sentiment_f = root+"output_sentiment_"+vocabulary+"_market_from_"+market+".txt"
@@ -144,10 +144,10 @@ def data():
 	print(str(request.json))
 	vocabulary = str(request.args.get('vocabulary'))
 	market = str(request.args.get('market'))
-	root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/output/"
-	#root = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\output\\"
+	# root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/gui_files/"
+	root = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\gui_files\\"
 
-	market_f = root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
+	market_f = root+"marketVariation_"+market+".txt"
 
 	file = open(market_f)
 
@@ -161,9 +161,8 @@ def data():
 		column2.append(splitted_line[1][:-1])
 	file.close()
 
-	root2 = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/gui_files/"
-	#root2 = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\gui_files\\"
-	sentiment_f = root2+"sentimentVariation_"+vocabulary+"_"+market+".txt"
+
+	sentiment_f = root+"sentimentVariation_"+vocabulary+"_"+market+".txt"
 
 	file = open(sentiment_f)
 
@@ -172,8 +171,11 @@ def data():
 		column3.append(splitted_line[1][:-1])
 	file.close()
 	data.append(column1)
-	data.append(column2)
-	data.append(column3)
+
+	data.append(normalize(column2))
+
+	data.append(normalize(column3))
+
 	return jsonify(data)
 
 #tweets
@@ -235,6 +237,18 @@ def correspondence(state, prediction):
 	print(prediction)
 
 	return str(count_corr / float(state.__len__() - 1))
+
+def normalize(list):
+	sum = 0.0
+	for el in list:
+		sum += float(el)
+
+	alpha = 1.0 / float(sum)
+	normalized_list = []
+	for el in list:
+		normalized_list.append(alpha * float(el))
+
+	return normalized_list
 
 
 if __name__ == '__main__':

@@ -207,6 +207,37 @@ function loadData(){
             $('#correlation').empty();
             $('#correlation').append("<p>-0.09409046011</p>");}
         
+        if(vocabulary=="afinn_bing_base_afinn" && market=="ecb.europa.eu"){
+            $('#correlation').empty();
+            $('#correlation').append("<p>0.08692247128</p>");}
+         if(vocabulary=="afinn_bing_base_afinn" && market=="exchangerates.com"){
+            $('#correlation').empty();
+            $('#correlation').append("<p>0.1203632819</p>");}
+         if(vocabulary=="afinn_bing_base_afinn" && market=="investing.com"){
+            $('#correlation').empty();
+            $('#correlation').append("<p>0.1798397364</p>");}
+         if(vocabulary=="afinn_bing_base_afinn" && market=="ofx.com"){
+            $('#correlation').empty();
+            $('#correlation').append("<p>0.1497037507</p>");}
+        if(vocabulary=="afinn_bing_base_afinn" && market=="pundsterlinglive.com"){
+            $('#correlation').empty();
+            $('#correlation').append("<p>0.03978643258</p>");}
+
+        if(vocabulary=="afinn_bing_base_bing" && market=="ecb.europa.eu"){
+            $('#correlation').empty();
+            $('#correlation').append("<p>-0.04485758168</p>");}
+         if(vocabulary=="afinn_bing_base_bing" && market=="exchangerates.com"){
+            $('#correlation').empty();
+            $('#correlation').append("<p>-0.1346175019</p>");}
+         if(vocabulary=="afinn_bing_base_bing" && market=="investing.com"){
+            $('#correlation').empty();
+            $('#correlation').append("<p>-0.1810101498</p>");}
+         if(vocabulary=="afinn_bing_base_bing" && market=="ofx.com"){
+            $('#correlation').empty();
+            $('#correlation').append("<p>-0.1641480791</p>");}
+        if(vocabulary=="afinn_bing_base_bing" && market=="pundsterlinglive.com"){
+            $('#correlation').empty();
+            $('#correlation').append("<p>0.05525965613</p>");}
       },
       error: function()
       {

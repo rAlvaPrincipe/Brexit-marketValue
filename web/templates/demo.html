@@ -7,9 +7,9 @@
 
 <h1>{{ name }}</h1>
 
-<div id="parameters" class="col-xs-4">
-  <form method="POST" action="{{ url_for('demo')}}">
 
+  <form method="POST" action="{{ url_for('demo')}}">
+  <div id="parameters" class="col-xs-6">
     <div class="form-group">
       <label for="vocabulary">Vocabulary</label>
       <select name="vocabulary" class="form-control">
@@ -41,7 +41,8 @@
               <option id="sent_discretized_variazione5" value="variazione_5"> Variazione (5) </option>
             </select>
     </div>
-
+</div>
+<div id="parameters2" class="col-xs-6">
     <div class="form-group">
       <label for="market-discretization">Market discretization (transitions)</label>
       <select name="transition_mod" class="form-control">
@@ -73,21 +74,26 @@
     </div>
 
 
-    <input type="submit" value="Calcola" class="btn btn-default">
+    
     <!-- <a href="{{ url_for('demo', dictionary = request.form['dictionary'], discretization = request.form['discretization'], typo = request.form['typo'],
          trtollerance = request.form['trtollerance'], smtollerance = request.form['smtollerance'])}}">
               <button type="button" class="btn btn-default btn-lg">
                 <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> Calcola
               </button>
             </a>-->
+    </div>
+    <div class="row">
+      <input type="submit" value="Calcola" style="float:right; margin-right: 25px;" class="btn btn-default">
+    </div>
   </form>
-</div>
+
 
 
 
 {% if data %}
 
-<div id="results" style="float:left;margin-top:50px;width:900px">
+<div class="row">
+  <div class="col-xs-4">
   <p>
     <h2>Matrici di probabilità</h2>
   </p>
@@ -110,7 +116,8 @@
       <td>{{ prob_matrix[4] }}</td>
     </tr>{% endif %} </tr>
   </table>
-
+</div>
+<div class="col-xs-4" style="margin-top: 70px">
   <p><b>Matrice di transizione</b></p>
   <table class="table table-bordered table-hover" style="width: auto">
     <tr>
@@ -157,8 +164,8 @@
           <td>{{transition_matrix[4][4]}}
           </td>{% endif %}</tr>
   </table>
-
-
+</div>
+<div class="col-xs-4" style="margin-top: 70px">
 
   <p><b>Matrice di emissione</b></p>
   <table class="table table-bordered table-hover" style="width: auto">
@@ -185,7 +192,8 @@
           <td>{{transition_matrix[2][4]}}</td>{% endif %}</tr>
 
   </table>
-
+</div>
+</div>
   <p>
     <h2>Filtraggio</h2>
   </p>
@@ -194,15 +202,8 @@
     <p><b>Risultati Filtraggio:</b></p>
     <p><b>Numero di elementi</b>: {{ steps }}</p>
     <p><b>Steps:</b> {{ filtering_seq }}</p>
-    <p><b>Risultato finale</b>: {{ filtering_result }}</p>
     <p><b>Corrispondenza</b>: {{ correspondence_filtering }}
   </div>
-
-  <div>
-    <p><b>Calcoli Filtraggio</b></p>
-    <p>{{ all_steps[0] }}</p>
-  </div>
-
 
   <div>
     <p>
@@ -213,7 +214,6 @@
   </div>
 
 
-</div>
 
 
 
