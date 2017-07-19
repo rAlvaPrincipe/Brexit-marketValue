@@ -36,7 +36,7 @@ def demo():
 		sent  = Sentiment(vocabulary, "tweets", 4) #only vocabulary is important
 
 		############# TRANSITION AND EMISSION MODEL
-		root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/output/"
+		root = "../data/preprocessed_data/output/"
 		market_transition_f = root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
 		market_emission_f	= root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
 		sentiment_f = root+"output_sentiment_"+vocabulary+"_market_from_"+market+".txt"
