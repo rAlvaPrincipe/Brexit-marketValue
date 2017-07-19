@@ -144,7 +144,8 @@ def data():
 	print(str(request.json))
 	vocabulary = str(request.args.get('vocabulary'))
 	market = str(request.args.get('market'))
-	# root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/gui_files/"
+	#root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/gui_files/"
+	# root = "../data/preprocessed_data/gui_files/"
 	root = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\gui_files\\"
 
 	market_f = root+"marketVariation_"+market+".txt"
