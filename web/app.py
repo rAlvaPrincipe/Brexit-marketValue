@@ -105,10 +105,10 @@ def demo():
 		# 0			  1					2		3			4
 		# prediction_step | prediction_Step_label | update | normalization | normalization label
 		all_steps = hmm_model.steps
-
+		emission_matrix_len=np.array(emission_matrix).transpose().__len__()
 		data = True
 		return render_template('demo.html', prob_matrix=prob_matrix, transition_matrix= transition_matrix, emission_matrix=emission_matrix,
-						 prob_matrix_len=len(I), transition_matrix_len=len(calc.T),emission_matrix_len=len(calc.O),
+						 prob_matrix_len=len(I), transition_matrix_len=len(calc.T),emission_matrix_len=emission_matrix_len,
 						 viterbi_seq = viterbi_seq, filtering_seq = filtering_seq,
 						 filtering_result = filtering_result, steps = steps,
 						 correspondence_filtering=correspondence_filtering, correspondence_viterbi=correspondence_viterbi,
