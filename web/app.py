@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request
 from flask_mysqldb import MySQL
 import sys, os, subprocess
+import pandas as pd
+import numpy as np
 # same as cd /web/ --> cd ../ --> cd src
 lib_path = os.path.abspath(os.path.join('..', 'src'))
 sys.path.append(lib_path)
@@ -94,17 +96,22 @@ def demo():
 		viterbi_seq = hmm_model.viterbi(observations, observations_labels, hiddenVars_labels)
 		correspondence_viterbi = correspondence(hiddenVars, viterbi_seq)
 
+		prob_matrix = np.round(I, 3)
+		transition_matrix = np.round(calc.T, 3)
+		emission_matrix = np.round(calc.O, 3)
+
 		# LABELS ALL STEPS
 		# 0			  1					2		3			4
 		# prediction_step | prediction_Step_label | update | normalization | normalization label
 		all_steps = hmm_model.steps
 
-		return render_template('demo.html', prob_matrix=I, transition_matrix= calc.T, emission_matrix=calc.O,
+		data = True
+		return render_template('demo.html', prob_matrix=prob_matrix, transition_matrix= transition_matrix, emission_matrix=emission_matrix,
 						 prob_matrix_len=len(I), transition_matrix_len=len(calc.T),emission_matrix_len=len(calc.O),
 						 viterbi_seq = viterbi_seq, filtering_seq = filtering_seq,
 						 filtering_result = filtering_result, steps = steps,
 						 correspondence_filtering=correspondence_filtering, correspondence_viterbi=correspondence_viterbi,
-					all_steps = all_steps)
+						 all_steps = all_steps, data=data)
 	else:
 			return render_template('demo.html')
 
