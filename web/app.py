@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 from flask_mysqldb import MySQL
 import sys, os, subprocess
 import pandas as pd
@@ -104,7 +104,6 @@ def demo():
 		# 0			  1					2		3			4
 		# prediction_step | prediction_Step_label | update | normalization | normalization label
 		all_steps = hmm_model.steps
-
 		data = True
 		return render_template('demo.html', prob_matrix=prob_matrix, transition_matrix= transition_matrix, emission_matrix=emission_matrix,
 						 prob_matrix_len=len(I), transition_matrix_len=len(calc.T),emission_matrix_len=len(calc.O),

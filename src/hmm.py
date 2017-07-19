@@ -9,6 +9,7 @@ class Hmm:
 		self.I = I
 		self.T = T
 		self.O = O
+		self.steps = []
 
 
 	# print the label associated to prediction step o update step
@@ -28,10 +29,10 @@ class Hmm:
 
 		for i in range(start, n_steps):
 			step =[]
-			
+
 			#prediction step
 			print("\nstep: "+str(i))
-			out =  np.dot(out, self.T)   
+			out =  np.dot(out, self.T)
 			step.append(out)
 			#wich state is predicted?
 			for k in range(0, out.__len__()):
@@ -43,13 +44,13 @@ class Hmm:
 			#update step
 			for j in range(0, observations_labels.__len__()):
 				if observations[i] == observations_labels[j][1]:
-					out = np.dot(out, self.diagonal(j) )  
+					out = np.dot(out, self.diagonal(j) )
 			step.append(out)
 			print("__update: "+str(out))
 
 
 			#normalization
-			out = self.normalize(out) 
+			out = self.normalize(out)
 			step.append(out)
 			for k in range(0, out.__len__()):
 				if max(out) == out[k]:
@@ -118,7 +119,7 @@ class Hmm:
 		#next steps
 		for i in range(1, observations.__len__()):   # for each observation
 			step = []
-				
+
 			# finding the index associated to the  current observation
 			observation_index = -1
 			for x in range(0, observations_labels.__len__()):
@@ -133,7 +134,7 @@ class Hmm:
 
 				# keeps only the data of the max prob.
 				for k in range(0, temp.__len__()):
-					if temp[k] == max(temp):	
+					if temp[k] == max(temp):
 						state_data.append(k)     # keeps the index of the vertex it calculates the max prob. from
 						state_data.append(temp[k])        # keeps the max possibile prob. in this state
 
@@ -144,15 +145,15 @@ class Hmm:
 		last_step = matrix.__len__()-1
 		probs = []
 		last = -1
-		
+
 		# just find the final state
 		for j in range(0, matrix[last_step].__len__()):    # for each state in the i step
-			probs.append(matrix[last_step][j][1]) 
+			probs.append(matrix[last_step][j][1])
 		for j in range(0, probs.__len__()):
 			if probs[j] == max(probs):
 				last = j
 
-		# finding indexes 
+		# finding indexes
 		indexes = []
 		for i in reversed(range(0, matrix.__len__())):
 			indexes.append(last)
@@ -169,11 +170,3 @@ class Hmm:
 
 
 		return labels
-
-
-
-
-
-
-
-
