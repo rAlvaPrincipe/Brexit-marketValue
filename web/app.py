@@ -36,7 +36,7 @@ def demo():
 		############# TRANSITION AND EMISSION MODEL
 		root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/output/"
 		market_transition_f = root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
-		market_emission_f   = root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
+		market_emission_f	= root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
 		sentiment_f = root+"output_sentiment_"+vocabulary+"_market_from_"+market+".txt"
 
 		calc = Calculator(market_transition_f, market_emission_f, sentiment_f)
@@ -94,14 +94,19 @@ def demo():
 		viterbi_seq = hmm_model.viterbi(observations, observations_labels, hiddenVars_labels)
 		correspondence_viterbi = correspondence(hiddenVars, viterbi_seq)
 
+		# LABELS ALL STEPS
+		# 0			  1					2		3			4
+		# prediction_step | prediction_Step_label | update | normalization | normalization label
+		all_steps = hmm_model.steps
 
 		return render_template('demo.html', prob_matrix=I, transition_matrix= calc.T, emission_matrix=calc.O,
 						 prob_matrix_len=len(I), transition_matrix_len=len(calc.T),emission_matrix_len=len(calc.O),
 						 viterbi_seq = viterbi_seq, filtering_seq = filtering_seq,
 						 filtering_result = filtering_result, steps = steps,
-						 correspondence_filtering=correspondence_filtering, correspondence_viterbi=correspondence_viterbi)
+						 correspondence_filtering=correspondence_filtering, correspondence_viterbi=correspondence_viterbi,
+					all_steps = all_steps)
 	else:
-		   return render_template('demo.html')
+			return render_template('demo.html')
 
 #sentiment
 @app.route('/sentiment', methods=['POST', 'GET'])
