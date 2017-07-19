@@ -37,7 +37,7 @@ def demo():
 
 		############# TRANSITION AND EMISSION MODEL
 		root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/output/"
-		root = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\output\\"
+		#root = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\output\\"
 		market_transition_f = root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
 		market_emission_f	= root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
 		sentiment_f = root+"output_sentiment_"+vocabulary+"_market_from_"+market+".txt"
@@ -114,7 +114,7 @@ def demo():
 						 correspondence_filtering=correspondence_filtering, correspondence_viterbi=correspondence_viterbi,
 						 all_steps = all_steps, data=data)
 	else:
-			return render_template('demo.html')
+		return render_template('demo.html')
 
 #sentiment
 @app.route('/sentiment', methods=['POST', 'GET'])
@@ -132,47 +132,49 @@ def sentiment():
 		return render_template('sentiment.html', tweet=tweet, dictionary=dictionary, sentiment=sentiment)
 	else:
 		return render_template('sentiment.html')
+
 #correlation
 @app.route('/correlation', methods=['POST', 'GET'])
 def correlation():
-        return render_template('correlation.html')
+		return render_template('correlation.html')
 
 @app.route('/load/graph', methods=['POST', 'GET'])
 def data():
-    data=[]
-    print(str(request.json))
-    vocabulary = str(request.args.get('vocabulary'))
-    market = str(request.args.get('market'))
-    root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/output/"
-    root = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\output\\"
+	data=[]
+	print(str(request.json))
+	vocabulary = str(request.args.get('vocabulary'))
+	market = str(request.args.get('market'))
+	root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/output/"
+	#root = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\output\\"
 
-    market_f = root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
+	market_f = root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
 
-    file = open(market_f)
+	file = open(market_f)
 
-    days_temp = []
-    column1=[]
-    column2=[]
-    column3=[]
-    for line in file:
-        splitted_line = line.split("\t")
-        column1.append(splitted_line[0])
-        column2.append(splitted_line[1][:-1])
-    file.close()
+	days_temp = []
+	column1=[]
+	column2=[]
+	column3=[]
+	for line in file:
+		splitted_line = line.split("\t")
+		column1.append(splitted_line[0])
+		column2.append(splitted_line[1][:-1])
+	file.close()
 
-    root2 = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\gui_files\\"
-    sentiment_f = root2+"sentimentVariation_"+vocabulary+"_"+market+".txt"
+	root2 = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/gui_files/"
+	#root2 = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\gui_files\\"
+	sentiment_f = root2+"sentimentVariation_"+vocabulary+"_"+market+".txt"
 
-    file = open(sentiment_f)
+	file = open(sentiment_f)
 
-    for line in file:
-        splitted_line = line.split("\t")
-        column3.append(splitted_line[1][:-1])
-    file.close()
-    data.append(column1)
-    data.append(column2)
-    data.append(column3)
-    return jsonify(data)
+	for line in file:
+		splitted_line = line.split("\t")
+		column3.append(splitted_line[1][:-1])
+	file.close()
+	data.append(column1)
+	data.append(column2)
+	data.append(column3)
+	return jsonify(data)
 
 #tweets
 @app.route('/tweets')

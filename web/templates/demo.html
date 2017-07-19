@@ -3,12 +3,12 @@
   .important {
     color: #336699;
   }
-</style>
+</style>{% endblock %} {% block content %}
 
 <h1>{{ name }}</h1>
 
 <div id="parameters" class="col-xs-4">
-  <form method="POST" , action="{{ url_for('demo')}}">
+  <form method="POST" action="{{ url_for('demo')}}">
 
     <div class="form-group">
       <label for="vocabulary">Vocabulary</label>
