@@ -36,8 +36,8 @@ def demo():
 		sent  = Sentiment(vocabulary, "tweets", 4) #only vocabulary is important
 
 		############# TRANSITION AND EMISSION MODEL
-		#root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/output/"
-		root = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\output\\"
+		root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/output/"
+		#root = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\output\\"
 		market_transition_f = root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
 		market_emission_f	= root+"output_market_"+vocabulary+"_market_from_"+market+".txt"
 		sentiment_f = root+"output_sentiment_"+vocabulary+"_market_from_"+market+".txt"
@@ -144,9 +144,9 @@ def data():
 	print(str(request.json))
 	vocabulary = str(request.args.get('vocabulary'))
 	market = str(request.args.get('market'))
-	#root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/gui_files/"
+	root = "/Users/maca/Desktop/UNIVERSITA/MODELLI/Brexit-marketValue/data/preprocessed_data/gui_files/"
 	# root = "../data/preprocessed_data/gui_files/"
-	root = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\gui_files\\"
+	#root = "D:\Dropbox\Git_Projects\Brexit-marketValue\data\preprocessed_data\gui_files\\"
 
 	market_f = root+"marketVariation_"+market+".txt"
 
